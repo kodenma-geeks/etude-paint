@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, PaintApplicationActivity!</string>
+    <string name="app_name">PaintApplication</string>
+    <string name="menu_back">１操作戻る</string>
+    <string name="menu_clear">クリア</string>
+    <string name="menu_save">保存</string>
+    <string name="menu_color">カラー</string>
+    <string name="save_success">保存成功</string>
+	<string name="save_fail">保存失敗</string>
+	<string name="save">save</string>
+	<string name="ok">OK</string>
+</resources>
