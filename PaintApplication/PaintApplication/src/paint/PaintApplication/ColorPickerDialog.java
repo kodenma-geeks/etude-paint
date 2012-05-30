@@ -27,6 +27,9 @@ public class ColorPickerDialog extends Dialog {
 
     private static class ColorPickerView extends View {
 
+    	
+    	
+    	//shima test
     	private Paint mPaint, mPaintC;
         private Paint mOKPaint;
         private final int[] mColors;
