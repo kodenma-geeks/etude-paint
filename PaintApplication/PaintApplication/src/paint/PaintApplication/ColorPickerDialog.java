@@ -30,6 +30,7 @@ public class ColorPickerDialog extends Dialog {
     	
     	//shima test
     	// shima test2
+    	//shima test3
     	private Paint mPaint, mPaintC;
         private Paint mOKPaint;
         private final int[] mColors;
