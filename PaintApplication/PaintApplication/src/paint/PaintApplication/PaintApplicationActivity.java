@@ -17,7 +17,7 @@ public class PaintApplicationActivity extends Activity {
 		paintView = new PaintView(this);
 		setContentView(paintView);
 	}
-
+//
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
