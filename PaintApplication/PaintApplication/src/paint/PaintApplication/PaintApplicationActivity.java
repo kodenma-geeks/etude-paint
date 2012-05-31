@@ -2,6 +2,7 @@ package paint.PaintApplication;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,15 +10,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 public class PaintApplicationActivity extends Activity {
+	public static int PAINT_APP = 1;
 	PaintView paintView;
 	int selectColor;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		paintView = new PaintView(this);
 		setContentView(paintView);
 	}
-//
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -49,7 +52,7 @@ public class PaintApplicationActivity extends Activity {
 
 			mColorPickerDialog = new ColorPickerDialog(this,
 					new ColorPickerDialog.OnColorChangedListener() {
-						
+
 						public void colorChanged(int color) {
 							selectColor = color;
 						}
@@ -57,7 +60,19 @@ public class PaintApplicationActivity extends Activity {
 
 			mColorPickerDialog.show();
 			break;
+		case R.id.configId: // ê›íËÉ{É^Éìâüâ∫éû
+			Intent it = new Intent(getApplicationContext(), ConfigView.class);
+			startActivityForResult(it, PAINT_APP);
+			break;
 		}
+
 		return true;
 	}
+
+	public void onActivityResult(int reqcode, int result, Intent it) {
+		if(reqcode == PAINT_APP && result == RESULT_OK ){
+			// äeê›íËçÄñ⁄ÇÃèàóù
+		}
+	}
+
 }
