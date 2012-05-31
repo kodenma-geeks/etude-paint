@@ -22,10 +22,13 @@ public class PaintView extends View {
 	private float oldY = 0f; // ひとつ前のY座標保持
 	private Path path = null; // パス情報を保持
 	private Bitmap bitmap = null; // キャッシュからキャプチャ画像
-	ArrayList<Path> draw_list = new ArrayList<Path>(); // 全てのパス情報を保持
-
-	private int color = Color.WHITE; // 線の色
-	private int thick = 2; // 線の太さ
+	
+	
+	private AllLine pts = null;	// 線情報クラスのインスタンス
+	ArrayList<AllLine> draw_list = new ArrayList<AllLine>(); // 全てのパス情報を保持
+	protected Paint paint = null;
+	private static int color = Color.WHITE; // 線の色
+	private static int futosa = 2; // 線の太さ
 
 	// コンストラクタ
 	public PaintView(Context context) {
@@ -34,43 +37,52 @@ public class PaintView extends View {
 
 	// 描画時に呼び出し
 	public void onDraw(Canvas canvas) {
-		Paint paint = new Paint();
-		paint.setColor(color); // 線の色
-		paint.setAntiAlias(true); // アンチエイリアスの有無
-		paint.setStyle(Paint.Style.STROKE); // 線のスタイル（STROKE：図形の輪郭線のみ表示、FILL:塗る）
-		paint.setStrokeWidth(thick); // 線の太さ
-		paint.setStrokeCap(Paint.Cap.ROUND); // 　線の先端スタイル（ROUND：丸くする）
-		paint.setStrokeJoin(Paint.Join.ROUND); // 線と線の接続点のスタイル（ROUND：丸くする）
-		for (int i = 0; i < draw_list.size(); i++) {
-			Path pt = draw_list.get(i);
-			canvas.drawPath(pt, paint);
+		
+		if(pts == null){	// 線が無いときは描画しない
+			return;
 		}
-		if (path != null) {
-			canvas.drawPath(path, paint);
-		}
+		pts.paint.setColor(color); // 線の色
+		pts.paint.setAntiAlias(true); // アンチエイリアスの有無
+		pts.paint.setStyle(Paint.Style.STROKE); // 線のスタイル（STROKE：図形の輪郭線のみ表示、FILL:塗る）
+		pts.paint.setStrokeWidth(futosa); // 線の太さ
+		pts.paint.setStrokeCap(Paint.Cap.ROUND); // 　線の先端スタイル（ROUND：丸くする）
+		pts.paint.setStrokeJoin(Paint.Join.ROUND); // 線と線の接続点のスタイル（ROUND：丸くする）
+			for (int i = 0; i < draw_list.size(); i++) {
+					Path pt = draw_list.get(i).path;
+					Paint pa = draw_list.get(i).paint;
+					canvas.drawPath(pt, pa);
+			}
+			if (path != null) {
+				canvas.drawPath(pts.path, pts.paint);
+			}
 	}
 
 	// 画面のタッチ時に呼び出し
 	public boolean onTouchEvent(MotionEvent e) {
+
 		// タッチイベント判定処理
 		switch (e.getAction()) {
 		case MotionEvent.ACTION_DOWN: // タッチして画面を押した時
-			path = new Path();
+			pts = new AllLine();
+			pts.paint = new Paint(); 
+			pts.path = new Path();
+			
 			oldX = e.getX();
 			oldY = e.getY();
-			path.moveTo(oldX, oldY);
+			pts.path.moveTo(oldX, oldY);
 			break;
 		case MotionEvent.ACTION_MOVE: // タッチしてから離すまでの移動して間
 			oldX += (e.getX() - oldX);
 			oldY += (e.getY() - oldY);
-			path.lineTo(oldX, oldY);
+			pts.path.lineTo(oldX, oldY);
 			invalidate();
 			break;
 		case MotionEvent.ACTION_UP: // タッチして離した時
 			oldX = e.getX();
 			oldY = e.getY();
-			path.lineTo(oldX, oldY);
-			draw_list.add(path);
+			pts.path.lineTo(oldX, oldY);
+
+			draw_list.add(pts);
 
 			// キャッシュからキャプチャを作成、そのためキャッシュをON
 			setDrawingCacheEnabled(true);
@@ -88,7 +100,10 @@ public class PaintView extends View {
 
 	// 1操作戻る
 	public void historyBack() {
-		Path previous = draw_list.get(draw_list.size() - 1);
+		AllLine previous = null;
+		if(draw_list.size() > 0){
+			previous = draw_list.get(draw_list.size() - 1);
+		}
 		draw_list.remove(previous);
 		previous.reset();
 		invalidate();
@@ -133,11 +148,19 @@ public class PaintView extends View {
 		}
 	}
 
-	public int getColor() {
+	public static int getColor() {
 		return color;
 	}
 
-	public void setColor(int color) {
-		this.color = color;
+	public static void setColor(int color) {
+		PaintView.color = color;
+	}
+	
+	public static int getFutosa() {
+		return color;
+	}
+
+	public static void setFutosa(int futosa) {
+		PaintView.futosa = futosa;
 	}
 }
