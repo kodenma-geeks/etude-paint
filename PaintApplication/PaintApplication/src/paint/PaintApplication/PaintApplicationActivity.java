@@ -12,7 +12,10 @@ import android.view.MenuItem;
 public class PaintApplicationActivity extends Activity {
 	public static int PAINT_APP = 1;
 	PaintView paintView;
-	int selectColor;
+	public static int selectColor;
+	int color;
+	int futosa;
+	final static int FUTOSA_MAX = 30; 		// 太さの最大値
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -47,18 +50,19 @@ public class PaintApplicationActivity extends Activity {
 					.setPositiveButton(R.string.ok, null).show();
 			break;
 		case R.id.colorId: // カラーボタン押下時
-
 			ColorPickerDialog mColorPickerDialog;
 
 			mColorPickerDialog = new ColorPickerDialog(this,
 					new ColorPickerDialog.OnColorChangedListener() {
-
+						
 						public void colorChanged(int color) {
 							selectColor = color;
+							PaintView.setColor(color);
 						}
-					}, Color.BLACK);
+					}, Color.WHITE);
 
 			mColorPickerDialog.show();
+			
 			break;
 		case R.id.configId: // 設定ボタン押下時
 			Intent it = new Intent(getApplicationContext(), ConfigView.class);
