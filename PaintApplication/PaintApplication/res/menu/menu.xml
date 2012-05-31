@@ -4,5 +4,5 @@
     <item android:id="@+id/clearId" android:title="@string/menu_clear"></item>
     <item android:id="@+id/saveId" android:title="@string/menu_save"></item>
     <item android:id="@+id/colorId" android:title="@string/menu_color"></item>
-    
+    <item android:id="@+id/configId" android:title="@string/menu_config"></item>
 </menu>
