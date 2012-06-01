@@ -204,12 +204,12 @@ public class PaintView extends View {
 			// .setEnabled(false);
 			return;
 		}
-		undo++;
 		path = draw_list.get(draw_list.size() + undo).path;
-//		pts.path = path;
-//		invalidate();@
+		paint = draw_list.get(draw_list.size() + undo).paint;
+		undo++;
+		invalidate();
 	}
-	
+
 	// ƒNƒŠƒA
 	public void clearPathList() {
 		draw_list.clear();
@@ -217,7 +217,6 @@ public class PaintView extends View {
 		undo = 0;
 		oldX = 0f;
 		oldY = 0f;
-//		pts.path = null;
 		invalidate();
 	}
 
