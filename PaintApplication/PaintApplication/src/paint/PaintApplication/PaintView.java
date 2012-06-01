@@ -188,7 +188,7 @@ public class PaintView extends View {
 //		invalidate();
 //	}
 	public void historyBack() {
-		if(draw_list.size() == 0){
+		if(draw_list.size() + undo == 0){
 			// .setEnabled(false);
 			return;
 		}
