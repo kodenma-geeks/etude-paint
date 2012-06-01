@@ -3,8 +3,10 @@ package paint.PaintApplication;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -80,9 +82,33 @@ public class PaintApplicationActivity extends Activity {
 	}
 
 	public void onActivityResult(int reqcode, int result, Intent it) {
-		if(reqcode == PAINT_APP && result == RESULT_OK ){
-			// Šeİ’è€–Ú‚Ìˆ—
+		// Šeİ’è€–Ú‚Ìˆ—
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		//===========”wŒiF•ÏXˆ—‚±‚±‚©‚ç=================================
+		String resStrBgcolor = prefs.getString(getString(R.string.conf_bgcolor_key), "");
+		int resIntBgColor = Integer.parseInt(resStrBgcolor);
+
+		switch (resIntBgColor) {
+		case 1:
+			paintView.setBackgroundColor(Color.YELLOW);
+			break;
+		case 2:
+			paintView.setBackgroundColor(Color.BLUE);
+			break;
+		case 3:
+			paintView.setBackgroundColor(Color.RED);
+			break;
+		case 4:
+			paintView.setBackgroundColor(Color.GREEN);
+			break;
+		case 5:
+			paintView.setBackgroundColor(Color.WHITE);
+			break;
+		default:
+			paintView.setBackgroundColor(Color.BLACK);
+			break;
 		}
+		//===========”wŒiF•ÏXˆ—‚±‚±‚Ü‚Å=================================
 	}
 
 }
