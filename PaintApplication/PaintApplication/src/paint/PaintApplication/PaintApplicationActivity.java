@@ -16,12 +16,18 @@ public class PaintApplicationActivity extends Activity {
 	int color;
 	int futosa;
 	final static int FUTOSA_MAX = 30; 		// ëæÇ≥ÇÃç≈ëÂíl
+	Intent it;
+	static int mode = PaintView.MODE_LINE;
+//	static int mode = PaintView.MODE_STAMP_CIRCLE;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		paintView = new PaintView(this);
 		setContentView(paintView);
+		
+//	    it = getIntent();
+//	    mode = it.getIntExtra("mode", 0);	
 	}
 
 	@Override

@@ -12,17 +12,25 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Path.Direction;
+import android.graphics.PointF;
 import android.os.Environment;
 import android.view.MotionEvent;
 import android.view.View;
 
 public class PaintView extends View {
+	static final int MODE_LINE = -1;
+	static final int MODE_STAMP_TRIANGLE = 0;
+	static final int MODE_STAMP_RECTANGLE = 1;
+	static final int MODE_STAMP_CIRCLE = 2;
+	static final int MODE_STAMP_STAR = 3;
 	// フィールド
 	private float oldX = 0f; // ひとつ前のX座標保持
 	private float oldY = 0f; // ひとつ前のY座標保持
-	private Path path = null; // パス情報を保持
+	protected Path path = null; // パス情報を保持
 	private Bitmap bitmap = null; // キャッシュからキャプチャ画像
 	
+	protected static int undo = 0; // アンドゥ処理のためのカウント変数
 	
 	private AllLine pts = null;	// 線情報クラスのインスタンス
 	ArrayList<AllLine> draw_list = new ArrayList<AllLine>(); // 全てのパス情報を保持
@@ -47,13 +55,14 @@ public class PaintView extends View {
 		pts.paint.setStrokeWidth(futosa); // 線の太さ
 		pts.paint.setStrokeCap(Paint.Cap.ROUND); // 　線の先端スタイル（ROUND：丸くする）
 		pts.paint.setStrokeJoin(Paint.Join.ROUND); // 線と線の接続点のスタイル（ROUND：丸くする）
-			for (int i = 0; i < draw_list.size(); i++) {
+			for (int i = 0; i < draw_list.size() + undo; i++) {
 					Path pt = draw_list.get(i).path;
 					Paint pa = draw_list.get(i).paint;
 					canvas.drawPath(pt, pa);
 			}
+//			if (pts.path != null) {
 			if (path != null) {
-				canvas.drawPath(pts.path, pts.paint);
+				canvas.drawPath(path, pts.paint);
 			}
 	}
 
@@ -63,34 +72,103 @@ public class PaintView extends View {
 		// タッチイベント判定処理
 		switch (e.getAction()) {
 		case MotionEvent.ACTION_DOWN: // タッチして画面を押した時
-			pts = new AllLine();
-			pts.paint = new Paint(); 
-			pts.path = new Path();
-			
-			oldX = e.getX();
-			oldY = e.getY();
-			pts.path.moveTo(oldX, oldY);
+			if (PaintApplicationActivity.mode == MODE_LINE) {
+				pts = new AllLine();
+				pts.paint = new Paint(); 
+				pts.path = new Path();
+				path = new Path();
+				
+				oldX = e.getX();
+				oldY = e.getY();
+				path.moveTo(oldX, oldY);
+			} else {
+				pts = new AllLine();
+				pts.paint = new Paint();
+				pts.path = new Path();
+				oldX = e.getX();
+				oldY = e.getY();
+				pts.path.moveTo(oldX, oldY);
+				
+				switch(PaintApplicationActivity.mode){
+				//△　スタンプ
+				case MODE_STAMP_TRIANGLE:
+					pts.path.moveTo(oldX, oldY-50);
+					pts.path.lineTo(oldX-50f, oldY+20f);
+					pts.path.lineTo(oldX+50, oldY+20f);
+					pts.path.lineTo(oldX, oldY-50);
+					draw_list.add(pts);
+					break;
+					//□　スタンプ
+				case MODE_STAMP_RECTANGLE:
+					pts.path.moveTo(oldX-50, oldY-50);
+					pts.path.lineTo(oldX+50f, oldY-50);
+					pts.path.lineTo(oldX+50, oldY+50f);
+					pts.path.lineTo(oldX-50, oldY+50f);
+					pts.path.lineTo(oldX-50, oldY-50);
+					draw_list.add(pts);
+					break;
+					//○　スタンプ
+				case MODE_STAMP_CIRCLE:
+					pts.path.addCircle(oldX, oldY, 50, Direction.CW);
+					draw_list.add(pts);
+					break;
+					//☆　スタンプ
+				case MODE_STAMP_STAR:
+					float theta = (float)(Math.PI * 72 / 180);
+					float r = 50f;
+					PointF center = new PointF(oldX, oldY);
+					float dx1 = (float)(r*Math.sin(theta));
+					float dx2 = (float)(r*Math.sin(2*theta));
+					float dy1 = (float)(r*Math.cos(theta));
+					float dy2 = (float)(r*Math.cos(2*theta));
+					pts.path.moveTo(center.x, center.y-r);
+					pts.path.lineTo(center.x-dx2, center.y-dy2);
+					pts.path.lineTo(center.x+dx1, center.y-dy1);
+					pts.path.lineTo(center.x-dx1, center.y-dy1);
+					pts.path.lineTo(center.x+dx2, center.y-dy2);
+					pts.path.lineTo(center.x, center.y-r);
+					draw_list.add(pts);
+					break;
+				default:
+					break;
+				}
+				invalidate();
+			}
 			break;
 		case MotionEvent.ACTION_MOVE: // タッチしてから離すまでの移動して間
-			oldX += (e.getX() - oldX);
-			oldY += (e.getY() - oldY);
-			pts.path.lineTo(oldX, oldY);
-			invalidate();
+			if (PaintApplicationActivity.mode == MODE_LINE) {
+				oldX += (e.getX() - oldX);
+				oldY += (e.getY() - oldY);
+				path.lineTo(oldX, oldY);
+				invalidate();
+			}
 			break;
 		case MotionEvent.ACTION_UP: // タッチして離した時
-			oldX = e.getX();
-			oldY = e.getY();
-			pts.path.lineTo(oldX, oldY);
-
-			draw_list.add(pts);
-
-			// キャッシュからキャプチャを作成、そのためキャッシュをON
-			setDrawingCacheEnabled(true);
-			bitmap = Bitmap.createBitmap(getDrawingCache());
-			// キャッシュはもうとらないのでキャッシュをOFF
-			setDrawingCacheEnabled(false);
-
-			invalidate();
+			if (PaintApplicationActivity.mode == MODE_LINE) {
+				oldX = e.getX();
+				oldY = e.getY();
+				path.lineTo(oldX, oldY);
+				
+				pts.path = path;
+				
+				while(undo < 0){
+					AllLine previous = draw_list.get(draw_list.size() - 1);
+					draw_list.remove(previous);
+					previous.reset();
+					invalidate();
+					undo++;
+				}
+				
+				draw_list.add(pts);
+	
+				// キャッシュからキャプチャを作成、そのためキャッシュをON
+				setDrawingCacheEnabled(true);
+				bitmap = Bitmap.createBitmap(getDrawingCache());
+				// キャッシュはもうとらないのでキャッシュをOFF
+				setDrawingCacheEnabled(false);
+	
+				invalidate();
+			}
 			break;
 		default:
 			break;
@@ -99,22 +177,47 @@ public class PaintView extends View {
 	}
 
 	// 1操作戻る
+//	public void historyBack() {
+//		AllLine previous = null;
+//		if(draw_list.size() > 0){
+//			previous = draw_list.get(draw_list.size() - 1);
+//		}
+//		pts.path = null; //shima
+//		draw_list.remove(previous);
+//		previous.reset();
+//		invalidate();
+//	}
 	public void historyBack() {
-		AllLine previous = null;
-		if(draw_list.size() > 0){
-			previous = draw_list.get(draw_list.size() - 1);
+		if(draw_list.size() == 0){
+			// .setEnabled(false);
+			return;
 		}
-		draw_list.remove(previous);
-		previous.reset();
+		undo--;
+//		path = pts.path;
+		path = null;
 		invalidate();
 	}
-
+	
+	// 1操作進む
+	public void historyForward() {
+		if(undo == 0){
+			// .setEnabled(false);
+			return;
+		}
+		undo++;
+		path = draw_list.get(draw_list.size() + undo).path;
+//		pts.path = path;
+//		invalidate();　
+	}
+	
 	// クリア
 	public void clearPathList() {
 		draw_list.clear();
+		pts = null;
+		undo = 0;
 		oldX = 0f;
 		oldY = 0f;
-		path = null;
+//		pts.path = null;
 		invalidate();
 	}
 
