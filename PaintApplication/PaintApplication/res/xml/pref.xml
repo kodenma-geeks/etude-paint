@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/config_title" >
+        <ListPreference
+            android:dialogTitle="@string/conf_bgcolor_title"
+            android:entries="@array/color_list_entries"
+            android:entryValues="@array/color_list_entryvalues"
+            android:key="@string/conf_bgcolor_key"
+            android:title="@string/conf_bgcolor_title" />
+        <ListPreference
+            android:dialogTitle="@string/conf_stamp_title"
+            android:entries="@array/stamp_list_entries"
+            android:entryValues="@array/stamp_list_entryvalues"
+            android:key="@string/conf_stamp_key"
+            android:title="@string/conf_stamp_title" />
+
+        <CheckBoxPreference
+            android:key="@string/conf_sound_key"
+            android:title="@string/conf_sound_title" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
