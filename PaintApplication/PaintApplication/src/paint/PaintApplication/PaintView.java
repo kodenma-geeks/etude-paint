@@ -16,6 +16,7 @@ import android.graphics.Path.Direction;
 import android.graphics.PointF;
 import android.media.MediaPlayer;
 import android.os.Environment;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -48,6 +49,10 @@ public class PaintView extends View {
 	public PaintView(Context context) {
 		super(context);
 		_context = context;
+	}
+//コンストラクタ
+	public PaintView(Context context, AttributeSet attrs) {
+		  super(context, attrs);
 	}
 
 	// 描画時に呼び出し
