@@ -1,26 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- メインメニュー -->
 <resources>
+
     <string name="hello">Hello World, PaintApplicationActivity!</string>
     <string name="app_name">PaintApplication</string>
     <string name="menu_back">１操作戻る</string>
     <string name="menu_clear">クリア</string>
     <string name="menu_save">保存</string>
     <string name="menu_color">カラー</string>
+    <string name="menu_setting">詳細設定</string>
 
-    <string name="menu_config">設定</string><!-- 設定ボタンの追加 -->
+    <!-- クリアダイアログ -->
+    <string name="clear">CLEAR</string>
+    <string name="all_clear_message">全て消去しますか？</string>
+    <string name="yes">はい</string>
+    <string name="no">いいえ</string>
+    <string name="menu_config">設定</string>
+ <!-- 設定ボタンの追加 -->
     <string name="strconf_apply">適用</string>
-    <string name="strconf_cancel">キャンセル</string>    
+    <string name="strconf_cancel">キャンセル</string>
     <!-- 項目名称 -->
     <string name="strconf_bgcolor">背景色</string>
     <string name="strconf_sound">操作音</string>
     <string name="strconf_stamp">図形スタンプ</string>
-        
     <string name="save_success">保存成功</string>
     <string name="save_fail">保存失敗</string>
     <string name="save">save</string>
     <string name="ok">OK</string>
-    
-    
+
     <!-- 設定画面文字列 -->
     <string name="config_title">設定画面</string>
     <string name="conf_bgcolor_key">背景色</string>
@@ -30,4 +37,5 @@
     <string name="conf_stamp_title">スタンプ図形の選択</string>
     <string name="conf_sound_title">操作音の設定</string>
     <!-- 設定画面文字列 -->
+
 </resources>
