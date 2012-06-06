@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -33,17 +34,20 @@ public class PaintView extends View {
 	// フィールド
 	private float oldX = 0f; // ひとつ前のX座標保持
 	private float oldY = 0f; // ひとつ前のY座標保持
-	protected Path path = null; // パス情報を保持
+	protected Path path; // パス情報を保持
 	private Bitmap bitmap = null; // キャッシュからキャプチャ画像
 
 	protected static int undo = 0; // アンドゥ処理のためのカウント変数
 
 	private AllLine pts = null; // 線情報クラスのインスタンス
 	ArrayList<AllLine> draw_list = new ArrayList<AllLine>(); // 全てのパス情報を保持
-	protected Paint paint = null;
+	protected Paint paint;
 	private static int color = Color.WHITE; // 線の色
 	private static int futosa = 2; // 線の太さ
+	private static boolean antiAlias = true;	// アンチエイリアス
+
 	final static int THICK_MAX = 30; 		// 太さの最大値
+	final static int THICK_MIN = 1; 		// 太さの最大値	//	浜田追加
 	
 	onBgm onbgm = new onBgm();
 	public MediaPlayer mp = null; // BGM用
@@ -54,10 +58,16 @@ public class PaintView extends View {
 	public PaintView(Context context) {
 		super(context);
 		_context = context;
+		undo = 0;
+		path = null;
+		paint = null;
 	}
 //コンストラクタ
 	public PaintView(Context context, AttributeSet attrs) {
 		  super(context, attrs);
+		  undo = 0;
+			path = null;
+			paint = null;
 	}
 
 	// 描画時に呼び出し
@@ -67,7 +77,7 @@ public class PaintView extends View {
 			return;
 		}
 		pts.paint.setColor(color); // 線の色
-		pts.paint.setAntiAlias(true); // アンチエイリアスの有無
+		pts.paint.setAntiAlias(antiAlias); // アンチエイリアスの有無
 		pts.paint.setStyle(Paint.Style.STROKE); // 線のスタイル（STROKE：図形の輪郭線のみ表示、FILL:塗る）
 		pts.paint.setStrokeWidth(futosa); // 線の太さ
 		pts.paint.setStrokeCap(Paint.Cap.ROUND); // 　線の先端スタイル（ROUND：丸くする）
@@ -79,7 +89,12 @@ public class PaintView extends View {
 		}
 		// if (pts.path != null) {
 		if (path != null) {
-			canvas.drawPath(path, pts.paint);
+			if (paint == null) { 
+				canvas.drawPath(path, pts.paint);
+			}
+			else{
+				canvas.drawPath(path, paint);
+			}
 		}
 	}
 
@@ -189,7 +204,7 @@ public class PaintView extends View {
 			default:
 				break;
 			}
-			draw_list.add(pts);
+//			draw_list.add(pts);//浜田
 			invalidate();			
 			break;
 		case MotionEvent.ACTION_UP: // タッチして離した時
@@ -214,6 +229,7 @@ public class PaintView extends View {
 			}
 
 			draw_list.add(pts);
+//			PaintApplicationActivity.ivUndo.setEnabled(true);
 
 			// キャッシュからキャプチャを作成、そのためキャッシュをON
 			setDrawingCacheEnabled(true);
@@ -248,10 +264,11 @@ public class PaintView extends View {
 	// }
 	public void historyBack() {
 		if (draw_list.size() + undo == 0) {
-			// .setEnabled(false);
+			// PaintApplicationActivity.ivUndo.setEnabled(false);
 			return;
 		}
 		undo--;
+//		PaintApplicationActivity.ivRedo.setEnabled(true);
 		// path = pts.path;
 		path = null;
 		invalidate();
@@ -260,7 +277,7 @@ public class PaintView extends View {
 	// 1操作進む
 	public void historyForward() {
 		if (undo == 0) {
-			// .setEnabled(false);
+			// PaintApplicationActivity.ivRedo.setEnabled(false);
 			return;
 		}
 		path = draw_list.get(draw_list.size() + undo).path;
@@ -318,11 +335,21 @@ public class PaintView extends View {
 	}
 
 	public static int getFutosa() {
-		return color;
+		return futosa;//浜田
 	}
 
 	public static void setFutosa(int futosa) {
+		if(futosa < THICK_MIN){
+			futosa = THICK_MIN;
+		}
 		PaintView.futosa = futosa;
+	}
+	public static boolean isAntiAlias() {
+		return antiAlias;
+	}
+
+	public static void setAntiAlias(boolean antiAlias) {
+		PaintView.antiAlias = antiAlias;
 	}
 
 	public class onBgm {
