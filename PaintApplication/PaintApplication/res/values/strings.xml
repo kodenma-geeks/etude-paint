@@ -9,8 +9,8 @@
     <string name="menu_save">保存</string>
     <string name="menu_color">カラー</string>
     <string name="menu_setting">詳細設定</string>
-        <string name="menu_config">設定</string>
-
+    <string name="menu_config">設定</string>
+	<string name="menu_futosa">太さ</string>
     <!-- クリアダイアログ -->
     <string name="clear">CLEAR</string>
     <string name="all_clear_message">全て消去しますか？</string>

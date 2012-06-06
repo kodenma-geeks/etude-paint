@@ -18,11 +18,13 @@ import android.widget.Toast;
 
 public class PaintApplicationActivity extends Activity implements
 		View.OnClickListener {
+
+	public static final int SAMPLE_APP = 2;
 	public static int PAINT_APP = 1;
 	PaintView paintView;
 	public static int selectColor;
 	int color;
-	int futosa;
+	int thick;
 	final static int FUTOSA_MAX = 30; // 太さの最大値
 	Intent it;
 	static int mode = PaintView.MODE_LINE;
@@ -120,12 +122,27 @@ public class PaintApplicationActivity extends Activity implements
 		 * 
 		
 		 */
+		// 太さ
+		case R.id.futosaId: // 太さボタン押下時
+			Intent intent = new Intent(PaintApplicationActivity.this,
+					PaintApplicationFutosa.class);
+			intent.putExtra("THICK", PaintView.getFutosa());
+			startActivityForResult(intent, SAMPLE_APP);
+			break;
 		}
 
 		return true;
 	}
 
 	public void onActivityResult(int reqcode, int result, Intent it) {
+		// 太さも設定画面からの戻り処理
+		if (reqcode == SAMPLE_APP) {
+			if (result == RESULT_OK) {
+				int ft = it.getIntExtra("THICK", 0);
+				PaintView.setFutosa(ft + 1);
+			}
+		}
+		else{
 		// 各設定項目の処理
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(this);
@@ -155,6 +172,7 @@ public class PaintApplicationActivity extends Activity implements
 			break;
 		}
 		// ===========背景色変更処理ここまで=================================
+		}
 	}
 
 	// ***********サブメニュークリックイベント*********************************

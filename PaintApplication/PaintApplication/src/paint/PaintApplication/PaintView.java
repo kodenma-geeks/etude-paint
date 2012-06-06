@@ -43,7 +43,8 @@ public class PaintView extends View {
 	protected Paint paint = null;
 	private static int color = Color.WHITE; // 線の色
 	private static int futosa = 2; // 線の太さ
-
+	final static int THICK_MAX = 30; 		// 太さの最大値
+	
 	onBgm onbgm = new onBgm();
 	public MediaPlayer mp = null; // BGM用
 	public boolean bgmFlag = true; // BGMflag用

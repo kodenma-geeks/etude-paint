@@ -25,5 +25,9 @@
         android:id="@+id/backId"
         android:title="@string/menu_back">
     </item> -->
+    <item
+        android:id="@+id/futosaId"
+        android:title="@string/menu_futosa">
+    </item>
 
 </menu>
