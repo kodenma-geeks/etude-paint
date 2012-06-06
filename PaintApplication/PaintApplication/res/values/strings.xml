@@ -31,9 +31,6 @@
 
     <!-- 設定画面文字列 -->
     <string name="config_title">設定画面</string>
-    <string name="conf_bgcolor_key">背景色</string>
-    <string name="conf_stamp_key">スタンプ図形</string>
-    <string name="conf_sound_key">操作音</string>
     <string name="conf_bgcolor_title">背景色の選択</string>
     <string name="conf_stamp_title">スタンプ図形の選択</string>
     <string name="conf_sound_title">操作音の設定</string>

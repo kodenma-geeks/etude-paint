@@ -3,20 +3,26 @@
 
     <PreferenceCategory android:title="@string/config_title" >
         <ListPreference
+            android:defaultValue="5"
             android:dialogTitle="@string/conf_bgcolor_title"
             android:entries="@array/color_list_entries"
             android:entryValues="@array/color_list_entryvalues"
-            android:key="@string/conf_bgcolor_key"
+            android:key="conf_bgcolor_key"
+            android:summary="Change selected background color"
             android:title="@string/conf_bgcolor_title" />
         <ListPreference
+            android:defaultValue="1"
             android:dialogTitle="@string/conf_stamp_title"
             android:entries="@array/stamp_list_entries"
             android:entryValues="@array/stamp_list_entryvalues"
-            android:key="@string/conf_stamp_key"
+            android:key="conf_stamp_key"
+            android:summary="Change selected stamp"
             android:title="@string/conf_stamp_title" />
 
         <CheckBoxPreference
-            android:key="@string/conf_sound_key"
+            android:defaultValue="false"
+            android:key="conf_sound_key"
+            android:summary="Checked Sound On"
             android:title="@string/conf_sound_title" />
     </PreferenceCategory>
 
