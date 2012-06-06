@@ -105,6 +105,7 @@ public class PaintView extends View {
 			break;
 
 		case MotionEvent.ACTION_MOVE: // タッチしてから離すまでの移動して間
+			float sq = (float)Math.sqrt((e.getX() - oldX)*(e.getX() - oldX)+(e.getY() - oldY)*(e.getY() - oldY));
 			switch (PaintApplicationActivity.mode) {
 			case MODE_LINE:
 				oldX += (e.getX() - oldX);
@@ -114,76 +115,76 @@ public class PaintView extends View {
 				// △　スタンプ
 			case MODE_STAMP_TRIANGLE:
 				path.reset();
-				path.moveTo(oldX, oldY - 50);
-				path.lineTo(oldX - 50f, oldY + 20f);
-				path.lineTo(oldX + 50f, oldY + 20f);
-				path.lineTo(oldX, oldY - 50f);
+				path.moveTo(oldX, oldY-50f*(sq/50));
+				path.lineTo(oldX-50f*(sq/50), oldY+20f*(sq/50));
+				path.lineTo(oldX+50f*(sq/50), oldY+20f*(sq/50));
+				path.lineTo(oldX, oldY-50f*(sq/50));		
 				break;
-				// □　スタンプ
+			// ???@?X?^???v
 			case MODE_STAMP_RECTANGLE:
 				path.reset();
-				path.moveTo(oldX - 50f, oldY - 50f);
-				path.lineTo(oldX + 50f, oldY - 50f);
-				path.lineTo(oldX + 50f, oldY + 50f);
-				path.lineTo(oldX - 50f, oldY + 50f);
-				path.lineTo(oldX - 50f, oldY - 50f);
+				path.moveTo(oldX-50f*(sq/50), oldY-50f*(sq/50));
+				path.lineTo(oldX+50f*(sq/50), oldY-50f*(sq/50));
+				path.lineTo(oldX+50f*(sq/50), oldY+50f*(sq/50));
+				path.lineTo(oldX-50f*(sq/50), oldY+50f*(sq/50));
+				path.lineTo(oldX-50f*(sq/50), oldY-50f*(sq/50));
 				break;
-				// ○　スタンプ
+			// ???@?X?^???v
 			case MODE_STAMP_CIRCLE:
 				path.reset();
-				path.addCircle(oldX, oldY, 50f, Direction.CW);
+				path.addCircle(oldX, oldY, 50f*(sq/50), Direction.CW);	
 				break;
-				// ☆　スタンプ
+			// ???@?X?^???v
 			case MODE_STAMP_STAR:
 				path.reset();
-				float theta = (float) (Math.PI * 72 / 180);
+				float theta = (float)(Math.PI * 72 / 180);
 				float r = 50f;
 				PointF center = new PointF(oldX, oldY);
-				float dx1 = (float) (r * Math.sin(theta));
-				float dx2 = (float) (r * Math.sin(2 * theta));
-				float dy1 = (float) (r * Math.cos(theta));
-				float dy2 = (float) (r * Math.cos(2 * theta));
-				path.moveTo(center.x, center.y - r);
-				path.lineTo(center.x - dx2, center.y - dy2);
-				path.lineTo(center.x + dx1, center.y - dy1);
-				path.lineTo(center.x - dx1, center.y - dy1);
-				path.lineTo(center.x + dx2, center.y - dy2);
-				path.lineTo(center.x, center.y - r);
+				float dx1 = (float)(r*Math.sin(theta));
+				float dx2 = (float)(r*Math.sin(2*theta));
+				float dy1 = (float)(r*Math.cos(theta));
+				float dy2 = (float)(r*Math.cos(2*theta));
+				path.moveTo(center.x, center.y-r*(sq/50));
+				path.lineTo(center.x-dx2*(sq/50), center.y-dy2*(sq/50));
+				path.lineTo(center.x+dx1*(sq/50), center.y-dy1*(sq/50));
+				path.lineTo(center.x-dx1*(sq/50), center.y-dy1*(sq/50));
+				path.lineTo(center.x+dx2*(sq/50), center.y-dy2*(sq/50));
+				path.lineTo(center.x, center.y-r*(sq/50));
 				break;
-				// △　スタンプ
+				
 			case MODE_STAMP_TRIANGLE_DURATION:
-				path.moveTo(oldX, oldY - 50);
-				path.lineTo(oldX - 50f, oldY + 20f);
-				path.lineTo(oldX + 50f, oldY + 20f);
-				path.lineTo(oldX, oldY - 50f);
+				path.moveTo(oldX, oldY-50f*(sq/50));
+				path.lineTo(oldX-50f*(sq/50), oldY+20f*(sq/50));
+				path.lineTo(oldX+50f*(sq/50), oldY+20f*(sq/50));
+				path.lineTo(oldX, oldY-50f*(sq/50));		
 				break;
-				// □　スタンプ
+			// ???@?X?^???v
 			case MODE_STAMP_RECTANGLE_DURATION:
-				path.moveTo(oldX - 50f, oldY - 50f);
-				path.lineTo(oldX + 50f, oldY - 50f);
-				path.lineTo(oldX + 50f, oldY + 50f);
-				path.lineTo(oldX - 50f, oldY + 50f);
-				path.lineTo(oldX - 50f, oldY - 50f);
+				path.moveTo(oldX-50f*(sq/50), oldY-50f*(sq/50));
+				path.lineTo(oldX+50f*(sq/50), oldY-50f*(sq/50));
+				path.lineTo(oldX+50f*(sq/50), oldY+50f*(sq/50));
+				path.lineTo(oldX-50f*(sq/50), oldY+50f*(sq/50));
+				path.lineTo(oldX-50f*(sq/50), oldY-50f*(sq/50));
 				break;
-				// ○　スタンプ
+			// ???@?X?^???v
 			case MODE_STAMP_CIRCLE_DURATION:
-				path.addCircle(oldX, oldY, 50f, Direction.CW);
+				path.addCircle(oldX, oldY, 50f*(sq/50), Direction.CW);	
 				break;
-				// ☆　スタンプ
+			// ???@?X?^???v
 			case MODE_STAMP_STAR_DURATION:
-				theta = (float) (Math.PI * 72 / 180);
+				theta = (float)(Math.PI * 72 / 180);
 				r = 50f;
 				center = new PointF(oldX, oldY);
-				dx1 = (float) (r * Math.sin(theta));
-				dx2 = (float) (r * Math.sin(2 * theta));
-				dy1 = (float) (r * Math.cos(theta));
-				dy2 = (float) (r * Math.cos(2 * theta));
-				path.moveTo(center.x, center.y - r);
-				path.lineTo(center.x - dx2, center.y - dy2);
-				path.lineTo(center.x + dx1, center.y - dy1);
-				path.lineTo(center.x - dx1, center.y - dy1);
-				path.lineTo(center.x + dx2, center.y - dy2);
-				path.lineTo(center.x, center.y - r);
+				dx1 = (float)(r*Math.sin(theta));
+				dx2 = (float)(r*Math.sin(2*theta));
+				dy1 = (float)(r*Math.cos(theta));
+				dy2 = (float)(r*Math.cos(2*theta));
+				path.moveTo(center.x, center.y-r*(sq/50));
+				path.lineTo(center.x-dx2*(sq/50), center.y-dy2*(sq/50));
+				path.lineTo(center.x+dx1*(sq/50), center.y-dy1*(sq/50));
+				path.lineTo(center.x-dx1*(sq/50), center.y-dy1*(sq/50));
+				path.lineTo(center.x+dx2*(sq/50), center.y-dy2*(sq/50));
+				path.lineTo(center.x, center.y-r*(sq/50));
 				break;
 			default:
 				break;
@@ -219,7 +220,7 @@ public class PaintView extends View {
 			bitmap = Bitmap.createBitmap(getDrawingCache());
 			// キャッシュはもうとらないのでキャッシュをOFF
 			setDrawingCacheEnabled(false);
-
+			PaintApplicationActivity.mode = MODE_LINE;
 			invalidate();
 			try {
 				mp.stop();

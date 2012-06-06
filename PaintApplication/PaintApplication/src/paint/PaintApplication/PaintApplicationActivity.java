@@ -122,13 +122,13 @@ public class PaintApplicationActivity extends Activity implements
 		 * 
 		
 		 */
-		// 太さ
-		case R.id.futosaId: // 太さボタン押下時
-			Intent intent = new Intent(PaintApplicationActivity.this,
-					PaintApplicationFutosa.class);
-			intent.putExtra("THICK", PaintView.getFutosa());
-			startActivityForResult(intent, SAMPLE_APP);
-			break;
+//		// 太さ
+//		case R.id.futosaId: // 太さボタン押下時
+//			Intent intent = new Intent(PaintApplicationActivity.this,
+//					PaintApplicationFutosa.class);
+//			intent.putExtra("THICK", PaintView.getFutosa());
+//			startActivityForResult(intent, SAMPLE_APP);
+//			break;
 		}
 
 		return true;
@@ -151,41 +151,26 @@ public class PaintApplicationActivity extends Activity implements
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.imageView_brush:
-			Toast.makeText(this, "brush Click", Toast.LENGTH_SHORT).show();
+			Intent intent = new Intent(PaintApplicationActivity.this, PaintApplicationFutosa.class);
+			intent.putExtra("THICK", PaintView.getFutosa());
+			startActivityForResult(intent, SAMPLE_APP);
 			break;
-
 		case R.id.imageView_color:
-			Toast.makeText(this, "color Click", Toast.LENGTH_SHORT).show();
 			ColorPickerDialog mColorPickerDialog;
-
-			mColorPickerDialog = new ColorPickerDialog(this,
-					new ColorPickerDialog.OnColorChangedListener() {
-
-						public void colorChanged(int color) {
-							selectColor = color;
-							PaintView.setColor(color);
-						}
-					}, Color.WHITE);
-
+			mColorPickerDialog = new ColorPickerDialog(this, new ColorPickerDialog.OnColorChangedListener() {
+				public void colorChanged(int color) {
+					selectColor = color;
+					PaintView.setColor(color);
+				}
+			}, Color.WHITE);
 			mColorPickerDialog.show();
-
 			break;
-
 		case R.id.imageView_eraser:
-			Toast.makeText(this, "eraser Click", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "まだです", Toast.LENGTH_SHORT).show();
 			break;
-
-		case R.id.imageView_undo:
-			Toast.makeText(this, "undo Click", Toast.LENGTH_SHORT).show();
-			paintView.historyBack();
-			break;
-
-		case R.id.imageView_redo:
-			Toast.makeText(this, "redo Click", Toast.LENGTH_SHORT).show();
-			break;
-
+		case R.id.imageView_undo: paintView.historyBack(); break;
+		case R.id.imageView_redo: paintView.historyForward(); break;
 		}
-
 	}
 
 }

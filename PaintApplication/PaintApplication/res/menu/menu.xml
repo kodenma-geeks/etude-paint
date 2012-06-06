@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
     <item
         android:id="@+id/configId"
         android:title="@string/menu_config">
@@ -13,21 +12,4 @@
         android:id="@+id/saveId"
         android:title="@string/menu_save">
     </item>
-  <!--   <item
-        android:id="@+id/colorId"
-        android:title="@string/menu_color">
-    </item>
-    <item
-        android:id="@+id/configId"
-        android:title="@string/menu_config">
-    </item>
-    <item
-        android:id="@+id/backId"
-        android:title="@string/menu_back">
-    </item> -->
-    <item
-        android:id="@+id/futosaId"
-        android:title="@string/menu_futosa">
-    </item>
-
 </menu>
