@@ -143,6 +143,7 @@ public class PaintApplicationActivity extends Activity implements
 			}
 		} else{
 			paintView.setBackgroundColor(ConfigView.getBgColor(this)); // ”wŒiF•ÏXˆ—
+			mode = ConfigView.getStamp(this);
 		}
 	}
 

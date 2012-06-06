@@ -14,27 +14,17 @@ public class ConfigView extends PreferenceActivity {
 		addPreferencesFromResource(R.xml.pref);
 	}
 
+	public static Integer getStamp(Context context) {
+		return Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("conf_stamp_key", ""));
+	}
 	public static Integer getBgColor(Context context) {
-		int resIntBgColor = Integer.parseInt(PreferenceManager
-				.getDefaultSharedPreferences(context).getString(
-						"conf_bgcolor_key", ""));
-
+		int resIntBgColor = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("conf_bgcolor_key", ""));
 		switch (resIntBgColor) {
-		case 1:
-			resIntBgColor = Color.YELLOW;
-			break;
-		case 2:
-			resIntBgColor = Color.BLUE;
-			break;
-		case 3:
-			resIntBgColor = Color.GREEN;
-			break;
-		case 4:
-			resIntBgColor = Color.WHITE;
-			break;
-		case 5:
-			resIntBgColor = Color.BLACK;
-			break;
+		case 1: resIntBgColor = Color.YELLOW; break;
+		case 2: resIntBgColor = Color.BLUE; break;
+		case 3: resIntBgColor = Color.GREEN; break;
+		case 4: resIntBgColor = Color.WHITE; break;
+		case 5: resIntBgColor = Color.BLACK; break;
 		}
 		return resIntBgColor;
 	}
