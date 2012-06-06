@@ -26,6 +26,10 @@ public class PaintView extends View {
 	static final int MODE_STAMP_RECTANGLE = 1;
 	static final int MODE_STAMP_CIRCLE = 2;
 	static final int MODE_STAMP_STAR = 3;
+	static final int MODE_STAMP_TRIANGLE_DURATION = 4;
+	static final int MODE_STAMP_RECTANGLE_DURATION = 5;
+	static final int MODE_STAMP_CIRCLE_DURATION = 6;
+	static final int MODE_STAMP_STAR_DURATION = 7;
 	// フィールド
 	private float oldX = 0f; // ひとつ前のX座標保持
 	private float oldY = 0f; // ひとつ前のY座標保持
@@ -84,114 +88,143 @@ public class PaintView extends View {
 		// タッチイベント判定処理
 		switch (e.getAction()) {
 		case MotionEvent.ACTION_DOWN: // タッチして画面を押した時
-			if (PaintApplicationActivity.mode == MODE_LINE) {
-				pts = new AllLine();
-				pts.paint = new Paint();
-				pts.path = new Path();
-				path = new Path();
 
-				oldX = e.getX();
-				oldY = e.getY();
-				path.moveTo(oldX, oldY);
+			pts = new AllLine();
+			pts.paint = new Paint();
+			pts.path = new Path();
+			path = new Path();
 
-				onbgm.onBgmran();
-			    mp.setLooping(true);
-				mp.start();
+			oldX = e.getX();
+			oldY = e.getY();
+			path.moveTo(oldX, oldY);
 
-			} else {
-				pts = new AllLine();
-				pts.paint = new Paint();
-				pts.path = new Path();
-				oldX = e.getX();
-				oldY = e.getY();
-				pts.path.moveTo(oldX, oldY);
+			onbgm.onBgmran();
+		    mp.setLooping(true);
+			mp.start();
+			break;
 
-				switch (PaintApplicationActivity.mode) {
+		case MotionEvent.ACTION_MOVE: // タッチしてから離すまでの移動して間
+			switch (PaintApplicationActivity.mode) {
+			case MODE_LINE:
+				oldX += (e.getX() - oldX);
+				oldY += (e.getY() - oldY);
+				path.lineTo(oldX, oldY);
+				break;
+			// △　スタンプ
+			case MODE_STAMP_TRIANGLE:
+				path.reset();
+				pts.path.moveTo(oldX, oldY - 50);
+				pts.path.lineTo(oldX - 50f, oldY + 20f);
+				pts.path.lineTo(oldX + 50f, oldY + 20f);
+				pts.path.lineTo(oldX, oldY - 50f);
+				break;
+			// □　スタンプ
+			case MODE_STAMP_RECTANGLE:
+				path.reset();
+				pts.path.moveTo(oldX - 50f, oldY - 50f);
+				pts.path.lineTo(oldX + 50f, oldY - 50f);
+				pts.path.lineTo(oldX + 50f, oldY + 50f);
+				pts.path.lineTo(oldX - 50f, oldY + 50f);
+				pts.path.lineTo(oldX - 50f, oldY - 50f);
+				break;
+			// ○　スタンプ
+			case MODE_STAMP_CIRCLE:
+				path.reset();
+				pts.path.addCircle(oldX, oldY, 50f, Direction.CW);
+				break;
+			// ☆　スタンプ
+			case MODE_STAMP_STAR:
+				path.reset();
+				float theta = (float) (Math.PI * 72 / 180);
+				float r = 50f;
+				PointF center = new PointF(oldX, oldY);
+				float dx1 = (float) (r * Math.sin(theta));
+				float dx2 = (float) (r * Math.sin(2 * theta));
+				float dy1 = (float) (r * Math.cos(theta));
+				float dy2 = (float) (r * Math.cos(2 * theta));
+				pts.path.moveTo(center.x, center.y - r);
+				pts.path.lineTo(center.x - dx2, center.y - dy2);
+				pts.path.lineTo(center.x + dx1, center.y - dy1);
+				pts.path.lineTo(center.x - dx1, center.y - dy1);
+				pts.path.lineTo(center.x + dx2, center.y - dy2);
+				pts.path.lineTo(center.x, center.y - r);
+				break;
 				// △　スタンプ
-				case MODE_STAMP_TRIANGLE:
+				case MODE_STAMP_TRIANGLE_DURATION:
 					pts.path.moveTo(oldX, oldY - 50);
 					pts.path.lineTo(oldX - 50f, oldY + 20f);
-					pts.path.lineTo(oldX + 50, oldY + 20f);
-					pts.path.lineTo(oldX, oldY - 50);
-					draw_list.add(pts);
+					pts.path.lineTo(oldX + 50f, oldY + 20f);
+					pts.path.lineTo(oldX, oldY - 50f);
 					break;
 				// □　スタンプ
-				case MODE_STAMP_RECTANGLE:
-					pts.path.moveTo(oldX - 50, oldY - 50);
-					pts.path.lineTo(oldX + 50f, oldY - 50);
-					pts.path.lineTo(oldX + 50, oldY + 50f);
-					pts.path.lineTo(oldX - 50, oldY + 50f);
-					pts.path.lineTo(oldX - 50, oldY - 50);
-					draw_list.add(pts);
+				case MODE_STAMP_RECTANGLE_DURATION:
+					pts.path.moveTo(oldX - 50f, oldY - 50f);
+					pts.path.lineTo(oldX + 50f, oldY - 50f);
+					pts.path.lineTo(oldX + 50f, oldY + 50f);
+					pts.path.lineTo(oldX - 50f, oldY + 50f);
+					pts.path.lineTo(oldX - 50f, oldY - 50f);
 					break;
 				// ○　スタンプ
-				case MODE_STAMP_CIRCLE:
-					pts.path.addCircle(oldX, oldY, 50, Direction.CW);
-					draw_list.add(pts);
+				case MODE_STAMP_CIRCLE_DURATION:
+					pts.path.addCircle(oldX, oldY, 50f, Direction.CW);
 					break;
 				// ☆　スタンプ
-				case MODE_STAMP_STAR:
-					float theta = (float) (Math.PI * 72 / 180);
-					float r = 50f;
-					PointF center = new PointF(oldX, oldY);
-					float dx1 = (float) (r * Math.sin(theta));
-					float dx2 = (float) (r * Math.sin(2 * theta));
-					float dy1 = (float) (r * Math.cos(theta));
-					float dy2 = (float) (r * Math.cos(2 * theta));
+				case MODE_STAMP_STAR_DURATION:
+					theta = (float) (Math.PI * 72 / 180);
+					r = 50f;
+					center = new PointF(oldX, oldY);
+					dx1 = (float) (r * Math.sin(theta));
+					dx2 = (float) (r * Math.sin(2 * theta));
+					dy1 = (float) (r * Math.cos(theta));
+					dy2 = (float) (r * Math.cos(2 * theta));
 					pts.path.moveTo(center.x, center.y - r);
 					pts.path.lineTo(center.x - dx2, center.y - dy2);
 					pts.path.lineTo(center.x + dx1, center.y - dy1);
 					pts.path.lineTo(center.x - dx1, center.y - dy1);
 					pts.path.lineTo(center.x + dx2, center.y - dy2);
 					pts.path.lineTo(center.x, center.y - r);
-					draw_list.add(pts);
 					break;
-				default:
-					break;
-				}
-				invalidate();
+			default:
+				break;
 			}
-			break;
-		case MotionEvent.ACTION_MOVE: // タッチしてから離すまでの移動して間
-			if (PaintApplicationActivity.mode == MODE_LINE) {
-				oldX += (e.getX() - oldX);
-				oldY += (e.getY() - oldY);
-				path.lineTo(oldX, oldY);
-				invalidate();
-			}
+			draw_list.add(pts);
+			invalidate();			
 			break;
 		case MotionEvent.ACTION_UP: // タッチして離した時
-			if (PaintApplicationActivity.mode == MODE_LINE) {
+			switch (PaintApplicationActivity.mode) {
+			case MODE_LINE:
 				oldX = e.getX();
 				oldY = e.getY();
 				path.lineTo(oldX, oldY);
-
-				pts.path = path;
-
-				while (undo < 0) {
-					AllLine previous = draw_list.get(draw_list.size() - 1);
-					draw_list.remove(previous);
-					previous.reset();
-					invalidate();
-					undo++;
-				}
-
-				draw_list.add(pts);
-
-				// キャッシュからキャプチャを作成、そのためキャッシュをON
-				setDrawingCacheEnabled(true);
-				bitmap = Bitmap.createBitmap(getDrawingCache());
-				// キャッシュはもうとらないのでキャッシュをOFF
-				setDrawingCacheEnabled(false);
-
-				invalidate();
+				break;
+			default:
+				break;
 			}
+
+			pts.path = path;
+
+			while (undo < 0) {
+				AllLine previous = draw_list.get(draw_list.size() - 1);
+				draw_list.remove(previous);
+				previous.reset();
+				invalidate();
+				undo++;
+			}
+
+			draw_list.add(pts);
+
+			// キャッシュからキャプチャを作成、そのためキャッシュをON
+			setDrawingCacheEnabled(true);
+			bitmap = Bitmap.createBitmap(getDrawingCache());
+			// キャッシュはもうとらないのでキャッシュをOFF
+			setDrawingCacheEnabled(false);
+
+			invalidate();
 			try {
 				mp.stop();
 			} catch (Exception er) {
 			} finally {
 				mp.release();
-
 			}
 			break;
 		default:

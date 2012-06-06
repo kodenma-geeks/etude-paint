@@ -6,49 +6,57 @@
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="7"        >
 
         <paint.PaintApplication.PaintView
             android:id="@+id/paintView"
             android:layout_width="fill_parent"
-            android:layout_height="400dp" />
+            android:layout_height="fill_parent"
+            />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:gravity="bottom"
-        android:orientation="horizontal" >
+        android:layout_height="0dp"
+        android:layout_weight="1"        android:gravity="bottom"
+        android:orientation="horizontal"
+        >
 
         <ImageView
             android:id="@+id/imageView_brush"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:src="@drawable/brush" />
 
         <ImageView
             android:id="@+id/imageView_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:src="@drawable/color" />
 
         <ImageView
             android:id="@+id/imageView_eraser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:src="@drawable/eraser" />
 
         <ImageView
             android:id="@+id/imageView_undo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:src="@drawable/undo" />
 
         <ImageView
             android:id="@+id/imageView_redo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:src="@drawable/redo" />
     </LinearLayout>
 

@@ -16,8 +16,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-
-public class PaintApplicationActivity extends Activity implements View.OnClickListener {
+public class PaintApplicationActivity extends Activity implements
+		View.OnClickListener {
 	public static int PAINT_APP = 1;
 	PaintView paintView;
 	public static int selectColor;
@@ -40,7 +40,7 @@ public class PaintApplicationActivity extends Activity implements View.OnClickLi
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		paintView = new PaintView(this);
-		setContentView(R.layout.main);//メインにカスタムビューを追加
+		setContentView(R.layout.main);// メインにカスタムビューを追加
 		paintView = (PaintView) findViewById(R.id.paintView);
 
 		ImageView ivBrush = (ImageView) findViewById(R.id.imageView_brush);
@@ -70,9 +70,12 @@ public class PaintApplicationActivity extends Activity implements View.OnClickLi
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.settingId: // 1操作戻るボタン押下時
-			/* paintView.historyBack(); */
+		case R.id.configId: // 設定ボタン押下時
+
+			Intent it = new Intent(getApplicationContext(), ConfigView.class);
+			startActivityForResult(it, PAINT_APP);
 			break;
+
 		case R.id.clearId: // クリアボタン押下時 (はい/いいえのダイアログ表示)
 			AlertDialog.Builder adBuilder = new AlertDialog.Builder(this);
 			adBuilder.setTitle(R.string.clear);
@@ -95,6 +98,7 @@ public class PaintApplicationActivity extends Activity implements View.OnClickLi
 					});
 			adBuilder.show();
 			break;
+			
 		case R.id.saveId: // 保存ボタン押下時
 			new AlertDialog.Builder(this)
 					.setTitle(R.string.save)
@@ -114,9 +118,7 @@ public class PaintApplicationActivity extends Activity implements View.OnClickLi
 		 * 
 		 * mColorPickerDialog.show();
 		 * 
-		 * break; case R.id.configId: // 設定ボタン押下時 Intent it = new
-		 * Intent(getApplicationContext(), ConfigView.class);
-		 * startActivityForResult(it, PAINT_APP); break;
+		
 		 */
 		}
 
@@ -127,7 +129,7 @@ public class PaintApplicationActivity extends Activity implements View.OnClickLi
 		// 各設定項目の処理
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(this);
-		// ===========背景色変更処理ここから=================================
+		// //===========背景色変更処理ここから=================================
 		String resStrBgcolor = prefs.getString(
 				getString(R.string.conf_bgcolor_key), "");
 		int resIntBgColor = Integer.parseInt(resStrBgcolor);
@@ -164,6 +166,19 @@ public class PaintApplicationActivity extends Activity implements View.OnClickLi
 
 		case R.id.imageView_color:
 			Toast.makeText(this, "color Click", Toast.LENGTH_SHORT).show();
+			ColorPickerDialog mColorPickerDialog;
+
+			mColorPickerDialog = new ColorPickerDialog(this,
+					new ColorPickerDialog.OnColorChangedListener() {
+
+						public void colorChanged(int color) {
+							selectColor = color;
+							PaintView.setColor(color);
+						}
+					}, Color.WHITE);
+
+			mColorPickerDialog.show();
+
 			break;
 
 		case R.id.imageView_eraser:
@@ -172,6 +187,7 @@ public class PaintApplicationActivity extends Activity implements View.OnClickLi
 
 		case R.id.imageView_undo:
 			Toast.makeText(this, "undo Click", Toast.LENGTH_SHORT).show();
+			paintView.historyBack();
 			break;
 
 		case R.id.imageView_redo:
