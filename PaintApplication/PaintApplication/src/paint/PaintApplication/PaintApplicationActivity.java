@@ -35,10 +35,10 @@ public class PaintApplicationActivity extends Activity implements
 	ImageView ivBrush;
 	ImageView ivColor;
 	ImageView ivEraser;
-	ImageView ivUndo;
-	ImageView ivRedo;
-//	static ImageView ivUndo;
-//	static ImageView ivRedo;
+//	ImageView ivUndo;
+//	ImageView ivRedo;
+	static ImageView ivUndo;
+	static ImageView ivRedo;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -59,10 +59,10 @@ public class PaintApplicationActivity extends Activity implements
 		ivUndo.setOnClickListener(this);
 		ivRedo.setOnClickListener(this);
 
-//		ivUndo.setEnabled(false);
-//		ivUndo.setAlpha(128);
-//		ivUndo.setEnabled(false);
-//		ivUndo.setAlpha(128);
+		ivUndo.setEnabled(false);
+		ivUndo.setAlpha(128);
+		ivRedo.setEnabled(false);
+		ivRedo.setAlpha(128);
 
 		// it = getIntent();
 		// mode = it.getIntExtra("mode", 0);
