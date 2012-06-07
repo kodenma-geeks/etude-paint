@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -16,6 +15,8 @@ import android.graphics.Path;
 import android.graphics.Path.Direction;
 import android.graphics.PointF;
 import android.media.MediaPlayer;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -49,7 +50,7 @@ public class PaintView extends View {
 
 	final static int THICK_MAX = 50; 		// 太さの最大値
 	final static int THICK_MIN = 1; 		// 太さの最大値	//	浜田追加
-	
+	MediaScannerConnection mc; // メディアスキャン
 	onBgm onbgm = new onBgm();
 	public MediaPlayer mp = null; // BGM用
 	public boolean bgmFlag = true; // BGMflag用
@@ -294,35 +295,52 @@ public class PaintView extends View {
 		invalidate();
 	}
 
-	// pngファイルとして画像ファイルを保存
-	public boolean isSaveToFile(PaintApplicationActivity paa) {
-		// 保存先の決定
-		String status = Environment.getExternalStorageState();
-		File fout;
-		if (!status.equals(Environment.MEDIA_MOUNTED)) {
-			fout = Environment.getDataDirectory();
+	// 画像ファイルを保存
+	public boolean isSaveToFile(PaintApplicationActivity paint) {
+		// 保存先の決定(存在しない場合は作成)
+		File file;
+		String path = Environment.getExternalStorageDirectory()
+				+ "/PaintApplication/";
+		if (!Environment.getExternalStorageState().equals(
+				Environment.MEDIA_MOUNTED)) {
+			file = Environment.getDataDirectory();
 		} else {
-			fout = new File(Environment.getExternalStorageDirectory()
-					+ "/PaintApplication/");
-			fout.mkdirs();
+			file = new File(path);
+			file.mkdirs();
 		}
-		// 一意となるファイル名を取得
+		// 一意となるファイル名を取得（タイムスタンプ）
 		Date d = new Date();
-		String fname = fout.getAbsolutePath() + "/";
-		fname += String.format("%4d%02d%02d-%02d%02d%02d.png",
+		String fileName = String.format("%4d%02d%02d-%02d%02d%02d.png",
 				(1900 + d.getYear()), d.getMonth() + 1, d.getDate(),
 				d.getHours(), d.getMinutes(), d.getSeconds());
+		file = new File(path + fileName + ".png");
 		// 画像をファイルに書き込む
 		try {
-			FileOutputStream out = new FileOutputStream(fname);
+			FileOutputStream out = new FileOutputStream(file);
 			bitmap.compress(CompressFormat.PNG, 100, out);
 			out.flush();
 			out.close();
+			this.mediaScanExecute(paint, file.getPath());
 			return true;
 		} catch (Exception e) {
 			return false;
 		}
 	}
+
+	void mediaScanExecute(PaintApplicationActivity paint, final String file) {
+		mc = new MediaScannerConnection(paint,
+				new MediaScannerConnection.MediaScannerConnectionClient() {
+					public void onScanCompleted(String path, Uri uri) {
+						mc.disconnect();
+					}
+
+					public void onMediaScannerConnected() {
+						mc.scanFile(file, "image/png");
+					}
+				});
+		mc.connect();
+	}
+
 
 	public static int getColor() {
 		return color;
