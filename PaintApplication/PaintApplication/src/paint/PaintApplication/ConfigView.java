@@ -17,6 +17,10 @@ public class ConfigView extends PreferenceActivity {
 	public static Integer getStamp(Context context) {
 		return Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("conf_stamp_key", ""));
 	}
+	public static boolean getSound(Context context) {
+		return PreferenceManager.getDefaultSharedPreferences(context)
+				.getBoolean("conf_sound_key", false);
+	}
 	public static Integer getBgColor(Context context) {
 		int resIntBgColor = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("conf_bgcolor_key", ""));
 		switch (resIntBgColor) {

@@ -378,7 +378,7 @@ public class PaintView extends View {
 		}
 
 		public void onBgmran() {
-			if (bgmFlag == true) {
+			if (PaintApplicationActivity.bgmFlag == true) {
 				int ran = (int) (Math.random() * 10) + 1;
 				{
 					switch (ran) {

@@ -29,7 +29,8 @@ public class PaintApplicationActivity extends Activity implements
 //	Intent it;
 	static int mode = PaintView.MODE_LINE;
 	// static int mode = PaintView.MODE_STAMP_CIRCLE;
-
+	static boolean bgmFlag = true;
+	
 	// サブメニューアイコン画像宣言
 
 	ImageView ivBrush;
@@ -153,6 +154,7 @@ public class PaintApplicationActivity extends Activity implements
 		} else{
 			paintView.setBackgroundColor(ConfigView.getBgColor(this)); // 背景色変更処理
 			mode = ConfigView.getStamp(this);
+			bgmFlag = ConfigView.getSound(this);
 		}
 	}
 

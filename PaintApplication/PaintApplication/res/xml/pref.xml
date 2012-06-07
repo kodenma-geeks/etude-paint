@@ -20,7 +20,7 @@
             android:title="@string/conf_stamp_title" />
 
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="conf_sound_key"
             android:summary="Checked Sound On"
             android:title="@string/conf_sound_title" />
