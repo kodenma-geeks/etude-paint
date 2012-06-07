@@ -127,9 +127,15 @@ public class PaintView extends View {
 			float sq = (float)Math.sqrt((e.getX() - oldX)*(e.getX() - oldX)+(e.getY() - oldY)*(e.getY() - oldY));
 			switch (PaintApplicationActivity.mode) {
 			case MODE_LINE:
-				oldX += (e.getX() - oldX);
-				oldY += (e.getY() - oldY);
-				path.lineTo(oldX, oldY);
+//				oldX += (e.getX() - oldX);
+//				oldY += (e.getY() - oldY);
+//				path.lineTo(oldX, oldY);
+				// 滑らかモード
+				int TOLERANCE = 6;
+				if (Math.abs(e.getX() - oldX) >= TOLERANCE || Math.abs(e.getY() - oldY) >= TOLERANCE) {
+					path.quadTo(oldX, oldY, (oldX + e.getX()) / 2, (oldY + e.getY()) / 2);
+				}
+				oldX = e.getX(); oldY = e.getY();
 				break;
 				// △　スタンプ
 			case MODE_STAMP_TRIANGLE:
