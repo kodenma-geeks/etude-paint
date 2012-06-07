@@ -11,6 +11,10 @@
     <string name="menu_setting">詳細設定</string>
     <string name="menu_config">設定</string>
 	<string name="menu_futosa">太さ</string>
+    	<string name="line_thick">線の太さ=</string><!-- 太さの追加 -->
+		<string name="antialias_on">アンチエイリアスあり</string><!-- アンチエイリアスの追加 -->
+    	<string name="antialias_off">アンチエイリアスなし</string><!-- アンチエイリアスの追加 -->
+	
     <!-- クリアダイアログ -->
     <string name="clear">CLEAR</string>
     <string name="all_clear_message">全て消去しますか？</string>

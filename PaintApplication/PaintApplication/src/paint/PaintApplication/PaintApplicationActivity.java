@@ -22,11 +22,11 @@ public class PaintApplicationActivity extends Activity implements
 	public static final int SAMPLE_APP = 2;
 	public static int PAINT_APP = 1;
 	PaintView paintView;
-	public static int selectColor;
-	int color;
-	int thick;
-	final static int FUTOSA_MAX = 30; // 太さの最大値
-	Intent it;
+//	public static int selectColor;
+//	int color;
+//	int thick;
+//	final static int FUTOSA_MAX = 50; // 太さの最大値
+//	Intent it;
 	static int mode = PaintView.MODE_LINE;
 	// static int mode = PaintView.MODE_STAMP_CIRCLE;
 
@@ -37,6 +37,8 @@ public class PaintApplicationActivity extends Activity implements
 	ImageView ivEraser;
 	ImageView ivUndo;
 	ImageView ivRedo;
+//	static ImageView ivUndo;
+//	static ImageView ivRedo;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,11 @@ public class PaintApplicationActivity extends Activity implements
 		ivEraser.setOnClickListener(this);
 		ivUndo.setOnClickListener(this);
 		ivRedo.setOnClickListener(this);
+
+//		ivUndo.setEnabled(false);
+//		ivUndo.setAlpha(128);
+//		ivUndo.setEnabled(false);
+//		ivUndo.setAlpha(128);
 
 		// it = getIntent();
 		// mode = it.getIntExtra("mode", 0);
@@ -138,8 +145,10 @@ public class PaintApplicationActivity extends Activity implements
 		// 太さも設定画面からの戻り処理
 		if (reqcode == SAMPLE_APP) {
 			if (result == RESULT_OK) {
-				int ft = it.getIntExtra("THICK", 0);
-				PaintView.setFutosa(ft + 1);
+				int ft = it.getIntExtra("THICK", 2);
+				boolean aa = it.getBooleanExtra("ANTIALIAS", true);
+				PaintView.setThick(ft);
+				PaintView.setAntiAlias(aa);
 			}
 		} else{
 			paintView.setBackgroundColor(ConfigView.getBgColor(this)); // 背景色変更処理
@@ -151,19 +160,23 @@ public class PaintApplicationActivity extends Activity implements
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.imageView_brush:
-			Intent intent = new Intent(PaintApplicationActivity.this, PaintApplicationFutosa.class);
-			intent.putExtra("THICK", PaintView.getFutosa());
+			PaintView.undoFlag = false;
+			Intent intent = new Intent(PaintApplicationActivity.this, PaintApplicationThick.class);
+			intent.putExtra("THICK", PaintView.getThick());
+			intent.putExtra("ANTIALIAS", PaintView.isAntiAlias());
 			startActivityForResult(intent, SAMPLE_APP);
 			break;
 		case R.id.imageView_color:
 			ColorPickerDialog mColorPickerDialog;
 			mColorPickerDialog = new ColorPickerDialog(this, new ColorPickerDialog.OnColorChangedListener() {
 				public void colorChanged(int color) {
-					selectColor = color;
+//					selectColor = color;
 					PaintView.setColor(color);
 				}
 			}, Color.WHITE);
 			mColorPickerDialog.show();
+			Toast.makeText(getApplicationContext(), Integer.toHexString(PaintView.getColor()),Toast.LENGTH_SHORT).show();
+
 			break;
 		case R.id.imageView_eraser:
 			Toast.makeText(this, "まだです", Toast.LENGTH_SHORT).show();

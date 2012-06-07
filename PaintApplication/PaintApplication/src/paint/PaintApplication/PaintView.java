@@ -38,15 +38,16 @@ public class PaintView extends View {
 	private Bitmap bitmap = null; // キャッシュからキャプチャ画像
 
 	protected static int undo = 0; // アンドゥ処理のためのカウント変数
+	static boolean undoFlag = true;	// 再描画バグのテストフラグ
 
 	private AllLine pts = null; // 線情報クラスのインスタンス
 	ArrayList<AllLine> draw_list = new ArrayList<AllLine>(); // 全てのパス情報を保持
-	protected Paint paint;
+	Paint paint;
 	private static int color = Color.WHITE; // 線の色
-	private static int futosa = 2; // 線の太さ
+	private static int thick = 2; // 線の太さ
 	private static boolean antiAlias = true;	// アンチエイリアス
 
-	final static int THICK_MAX = 30; 		// 太さの最大値
+	final static int THICK_MAX = 50; 		// 太さの最大値
 	final static int THICK_MIN = 1; 		// 太さの最大値	//	浜田追加
 	
 	onBgm onbgm = new onBgm();
@@ -76,25 +77,23 @@ public class PaintView extends View {
 		if (pts == null) { // 線が無いときは描画しない
 			return;
 		}
-		pts.paint.setColor(color); // 線の色
-		pts.paint.setAntiAlias(antiAlias); // アンチエイリアスの有無
-		pts.paint.setStyle(Paint.Style.STROKE); // 線のスタイル（STROKE：図形の輪郭線のみ表示、FILL:塗る）
-		pts.paint.setStrokeWidth(futosa); // 線の太さ
-		pts.paint.setStrokeCap(Paint.Cap.ROUND); // 　線の先端スタイル（ROUND：丸くする）
-		pts.paint.setStrokeJoin(Paint.Join.ROUND); // 線と線の接続点のスタイル（ROUND：丸くする）
+		if (undoFlag) { 
+			paint.setColor(color); // 線の色
+			paint.setAntiAlias(antiAlias); // アンチエイリアスの有無
+			paint.setStyle(Paint.Style.STROKE); // 線のスタイル（STROKE：図形の輪郭線のみ表示、FILL:塗る）
+			paint.setStrokeWidth(thick); // 線の太さ
+			paint.setStrokeCap(Paint.Cap.ROUND); // 　線の先端スタイル（ROUND：丸くする）
+			paint.setStrokeJoin(Paint.Join.ROUND); // 線と線の接続点のスタイル（ROUND：丸くする）
+		}
+
 		for (int i = 0; i < draw_list.size() + undo; i++) {
 			Path pt = draw_list.get(i).path;
 			Paint pa = draw_list.get(i).paint;
 			canvas.drawPath(pt, pa);
 		}
-		// if (pts.path != null) {
-		if (path != null) {
-			if (paint == null) { 
-				canvas.drawPath(path, pts.paint);
-			}
-			else{
-				canvas.drawPath(path, paint);
-			}
+
+		if (undoFlag) { 
+			canvas.drawPath(path, paint);
 		}
 	}
 
@@ -109,6 +108,7 @@ public class PaintView extends View {
 			pts.paint = new Paint();
 			pts.path = new Path();
 			path = new Path();
+			paint = new Paint();
 
 			oldX = e.getX();
 			oldY = e.getY();
@@ -120,6 +120,7 @@ public class PaintView extends View {
 			break;
 
 		case MotionEvent.ACTION_MOVE: // タッチしてから離すまでの移動して間
+			undoFlag = true;
 			float sq = (float)Math.sqrt((e.getX() - oldX)*(e.getX() - oldX)+(e.getY() - oldY)*(e.getY() - oldY));
 			switch (PaintApplicationActivity.mode) {
 			case MODE_LINE:
@@ -219,6 +220,7 @@ public class PaintView extends View {
 			}
 
 			pts.path = path;
+			pts.paint = paint;
 
 			while (undo < 0) {
 				AllLine previous = draw_list.get(draw_list.size() - 1);
@@ -230,6 +232,7 @@ public class PaintView extends View {
 
 			draw_list.add(pts);
 //			PaintApplicationActivity.ivUndo.setEnabled(true);
+//			PaintApplicationActivity.ivUndo.setAlpha(255);
 
 			// キャッシュからキャプチャを作成、そのためキャッシュをON
 			setDrawingCacheEnabled(true);
@@ -252,36 +255,29 @@ public class PaintView extends View {
 	}
 
 	// 1操作戻る
-	// public void historyBack() {
-	// AllLine previous = null;
-	// if(draw_list.size() > 0){
-	// previous = draw_list.get(draw_list.size() - 1);
-	// }
-	// pts.path = null; //shima
-	// draw_list.remove(previous);
-	// previous.reset();
-	// invalidate();
-	// }
 	public void historyBack() {
 		if (draw_list.size() + undo == 0) {
-			// PaintApplicationActivity.ivUndo.setEnabled(false);
+//			PaintApplicationActivity.ivUndo.setEnabled(false);
+//			PaintApplicationActivity.ivUndo.setAlpha(128);
 			return;
 		}
+		undoFlag = false;
 		undo--;
 //		PaintApplicationActivity.ivRedo.setEnabled(true);
-		// path = pts.path;
-		path = null;
+//		PaintApplicationActivity.ivRedo.setAlpha(255);
 		invalidate();
 	}
 
 	// 1操作進む
 	public void historyForward() {
 		if (undo == 0) {
-			// PaintApplicationActivity.ivRedo.setEnabled(false);
+// 			PaintApplicationActivity.ivRedo.setEnabled(false);
+//			PaintApplicationActivity.ivRedo.setAlpha(128);
 			return;
 		}
-		path = draw_list.get(draw_list.size() + undo).path;
-		paint = draw_list.get(draw_list.size() + undo).paint;
+		undoFlag = false;
+//		path = draw_list.get(draw_list.size() + undo).path;
+//		paint = draw_list.get(draw_list.size() + undo).paint;
 		undo++;
 		invalidate();
 	}
@@ -334,22 +330,22 @@ public class PaintView extends View {
 		PaintView.color = color;
 	}
 
-	public static int getFutosa() {
-		return futosa;//浜田
+	public static int getThick() {
+		return thick;//浜田
 	}
 
-	public static void setFutosa(int futosa) {
+	public static void setThick(int futosa) {
 		if(futosa < THICK_MIN){
 			futosa = THICK_MIN;
 		}
-		PaintView.futosa = futosa;
+		PaintView.thick = futosa;
 	}
 	public static boolean isAntiAlias() {
 		return antiAlias;
 	}
 
-	public static void setAntiAlias(boolean antiAlias) {
-		PaintView.antiAlias = antiAlias;
+	public static void setAntiAlias(boolean aa) {
+		PaintView.antiAlias = aa;
 	}
 
 	public class onBgm {
