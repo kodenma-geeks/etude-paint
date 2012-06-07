@@ -114,7 +114,7 @@ public class ColorPickerDialog extends Dialog {
             canvas.drawRoundRect(new RectF(OK_X0, OK_Y0, OK_X1, OK_Y1), 5, 5, mOKPaint);
             
             Paint textPaint = new Paint();
-            textPaint.setColor(Color.WHITE);
+            textPaint.setColor(Color.BLACK);
             textPaint.setTextSize(20);
             textPaint.setAntiAlias(true);
             //canvas.drawText("OK", 0 - 12, (float) (CENTER_X * 1.2) + 22, textPaint);
