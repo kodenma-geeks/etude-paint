@@ -60,6 +60,11 @@ public class PaintApplicationActivity extends Activity implements
 		ivUndo.setOnClickListener(this);
 		ivRedo.setOnClickListener(this);
 
+		ivUndo.setEnabled(false);
+		ivUndo.setAlpha(128);
+		ivRedo.setEnabled(false);
+		ivRedo.setAlpha(128);
+		
 //		ivUndo.setEnabled(false);
 //		ivUndo.setAlpha(128);
 //		ivRedo.setEnabled(false);

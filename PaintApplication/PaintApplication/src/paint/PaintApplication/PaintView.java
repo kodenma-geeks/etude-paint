@@ -21,7 +21,7 @@ import android.os.Environment;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-
+import android.widget.ImageView;
 public class PaintView extends View {
 	static final int MODE_LINE = -1;
 	static final int MODE_STAMP_TRIANGLE = 0;
@@ -57,6 +57,7 @@ public class PaintView extends View {
 	public static Context _context = null; 
 
 //	PaintApplicationActivity paintApplicationActivity = new PaintApplicationActivity();
+	PaintApplicationActivity paintAA = (PaintApplicationActivity)_context;
 	
 	// コンストラクタ
 	public PaintView(Context context) {
@@ -239,10 +240,15 @@ public class PaintView extends View {
 				undo++;
 			}
 
+			pts.path = path;
+			pts.paint = paint;
 			draw_list.add(pts);
-//			paintApplicationActivity.ivUndo.setEnabled(true);
-//			paintApplicationActivity.ivUndo.setAlpha(255);
+			paintAA.ivUndo = (ImageView) paintAA.findViewById(R.id.imageView_undo);
+			paintAA.ivRedo = (ImageView) paintAA.findViewById(R.id.imageView_redo);
 
+			
+			setButtonEnabled(paintAA.ivUndo,true);
+			setButtonEnabled(paintAA.ivRedo,false);
 			// キャッシュからキャプチャを作成、そのためキャッシュをON
 			setDrawingCacheEnabled(true);
 			bitmap = Bitmap.createBitmap(getDrawingCache());
@@ -265,13 +271,13 @@ public class PaintView extends View {
 
 	// 1操作戻る
 	public void historyBack() {
+		undo--;
+		setButtonEnabled(paintAA.ivRedo,true);
 		if (draw_list.size() + undo == 0) {
-//			paintApplicationActivity.ivUndo.setEnabled(false);
-//			paintApplicationActivity.ivUndo.setAlpha(128);
-			return;
+			setButtonEnabled(paintAA.ivUndo,false);
 		}
 		undoFlag = false;
-		undo--;
+
 //		paintApplicationActivity.ivRedo.setEnabled(true);
 //		paintApplicationActivity.ivRedo.setAlpha(255);
 		invalidate();
@@ -279,15 +285,14 @@ public class PaintView extends View {
 
 	// 1操作進む
 	public void historyForward() {
+		undo++;
+		setButtonEnabled(paintAA.ivUndo,true);
 		if (undo == 0) {
-// 			PaintApplicationActivity.ivRedo.setEnabled(false);
-//			PaintApplicationActivity.ivRedo.setAlpha(128);
-			return;
+			setButtonEnabled(paintAA.ivRedo,false);
 		}
 		undoFlag = false;
 //		path = draw_list.get(draw_list.size() + undo).path;
 //		paint = draw_list.get(draw_list.size() + undo).paint;
-		undo++;
 		invalidate();
 	}
 
@@ -298,6 +303,8 @@ public class PaintView extends View {
 		undo = 0;
 		oldX = 0f;
 		oldY = 0f;
+		setButtonEnabled(paintAA.ivUndo,false);
+		setButtonEnabled(paintAA.ivRedo,false);
 		invalidate();
 	}
 
@@ -333,6 +340,17 @@ public class PaintView extends View {
 		}
 	}
 
+	// アンドゥボタンEnabled処理メソッド
+	public static void setButtonEnabled(ImageView btn, boolean alpha){
+		if(alpha){
+			btn.setEnabled(true);
+			btn.setAlpha(255);
+		}
+		else{
+			btn.setEnabled(false);
+			btn.setAlpha(128);		
+		}
+	}
 	void mediaScanExecute(PaintApplicationActivity paint, final String file) {
 		mc = new MediaScannerConnection(paint,
 				new MediaScannerConnection.MediaScannerConnectionClient() {
