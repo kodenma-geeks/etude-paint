@@ -55,6 +55,8 @@ public class PaintView extends View {
 	public boolean bgmFlag = true; // BGMflag用
 	public static Context _context = null; 
 
+//	PaintApplicationActivity paintApplicationActivity = new PaintApplicationActivity();
+	
 	// コンストラクタ
 	public PaintView(Context context) {
 		super(context);
@@ -231,8 +233,8 @@ public class PaintView extends View {
 			}
 
 			draw_list.add(pts);
-//			PaintApplicationActivity.ivUndo.setEnabled(true);
-//			PaintApplicationActivity.ivUndo.setAlpha(255);
+//			paintApplicationActivity.ivUndo.setEnabled(true);
+//			paintApplicationActivity.ivUndo.setAlpha(255);
 
 			// キャッシュからキャプチャを作成、そのためキャッシュをON
 			setDrawingCacheEnabled(true);
@@ -257,14 +259,14 @@ public class PaintView extends View {
 	// 1操作戻る
 	public void historyBack() {
 		if (draw_list.size() + undo == 0) {
-//			PaintApplicationActivity.ivUndo.setEnabled(false);
-//			PaintApplicationActivity.ivUndo.setAlpha(128);
+//			paintApplicationActivity.ivUndo.setEnabled(false);
+//			paintApplicationActivity.ivUndo.setAlpha(128);
 			return;
 		}
 		undoFlag = false;
 		undo--;
-//		PaintApplicationActivity.ivRedo.setEnabled(true);
-//		PaintApplicationActivity.ivRedo.setAlpha(255);
+//		paintApplicationActivity.ivRedo.setEnabled(true);
+//		paintApplicationActivity.ivRedo.setAlpha(255);
 		invalidate();
 	}
 

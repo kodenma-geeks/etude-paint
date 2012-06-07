@@ -35,10 +35,10 @@ public class PaintApplicationActivity extends Activity implements
 	ImageView ivBrush;
 	ImageView ivColor;
 	ImageView ivEraser;
-//	ImageView ivUndo;
-//	ImageView ivRedo;
-	static ImageView ivUndo;
-	static ImageView ivRedo;
+	ImageView ivUndo;
+	ImageView ivRedo;
+//	static ImageView ivUndo;
+//	static ImageView ivRedo;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
