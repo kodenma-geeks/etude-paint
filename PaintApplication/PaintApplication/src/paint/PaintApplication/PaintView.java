@@ -23,19 +23,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 public class PaintView extends View {
-	private class Element {
-		public Path path = new Path(); 			// path情報を保持
-		public Paint paint = new Paint(); 		// paint情報を保持
-		boolean eraser =  false;
-		private Element(){
-			paint.setColor(color); // 線の色
-			paint.setAntiAlias(antiAlias); // アンチエイリアスの有無
-			paint.setStyle(Paint.Style.STROKE); // 線のスタイル（STROKE：図形の輪郭線のみ表示、FILL:塗る）
-			paint.setStrokeWidth(thick); // 線の太さ
-			paint.setStrokeCap(Paint.Cap.ROUND); // 　線の先端スタイル（ROUND：丸くする）
-			paint.setStrokeJoin(Paint.Join.ROUND); // 線と線の接続点のスタイル（ROUND：丸くする）
-		}
-	}
 	private final int MODE_LINE = -1;
 	private final int MODE_STAMP_TRIANGLE = 0;
 	private final int MODE_STAMP_RECTANGLE = 1;
@@ -45,6 +32,20 @@ public class PaintView extends View {
 	private final int MODE_STAMP_RECTANGLE_DURATION = 5;
 	private final int MODE_STAMP_CIRCLE_DURATION = 6;
 	private final int MODE_STAMP_STAR_DURATION = 7;
+	
+	private class Element {
+		public Path path = new Path(); 			// path情報を保持
+		public Paint paint = new Paint(); 		// paint情報を保持
+		boolean eraser =  eraserMode;
+		private Element(){
+			paint.setColor(eraserMode? bgColor : color); // アンチエイリアスの有無
+			paint.setAntiAlias(antiAlias); // アンチエイリアスの有無
+			paint.setStyle(Paint.Style.STROKE); // 線のスタイル（STROKE：図形の輪郭線のみ表示、FILL:塗る）
+			paint.setStrokeWidth(thick); // 線の太さ
+			paint.setStrokeCap(Paint.Cap.ROUND); // 　線の先端スタイル（ROUND：丸くする）
+			paint.setStrokeJoin(Paint.Join.ROUND); // 線と線の接続点のスタイル（ROUND：丸くする）
+		}
+	}
 	
 	int mode = MODE_LINE;
 	boolean bgmFlag = true;
@@ -58,8 +59,10 @@ public class PaintView extends View {
 	private int undo = 0; // アンドゥ処理のためのカウント変数
 	boolean undoFlag = true;	// 再描画バグのテストフラグ
 
-	private int color = Color.WHITE; // 線の色
+	private int color = Color.WHITE;
+	int bgColor = Color.BLACK;
 	private int thick = 2; // 線の太さ
+	boolean eraserMode = false; // 消しゴムモード
 	private boolean antiAlias = true;	// アンチエイリアス
 
 	private MediaScannerConnection mc; // メディアスキャン
@@ -78,7 +81,6 @@ public class PaintView extends View {
 		undo = 0;
 	}
 	public void onDraw(Canvas canvas) {
-
 		if (element == null) { // 線が無いときは描画しない
 			return;
 		}
@@ -101,9 +103,9 @@ public class PaintView extends View {
 			oldY = e.getY();
 			element.path.moveTo(oldX, oldY);
 
-//			onbgm.onBgmran();
-//		    mp.setLooping(true);
-//			mp.start();
+			onbgm.onBgmran();
+		    mp.setLooping(true);
+			mp.start();
 			break;
 
 		case MotionEvent.ACTION_MOVE: // タッチしてから離すまでの移動して間
@@ -209,11 +211,11 @@ public class PaintView extends View {
 			}
 			// UNDOの後に新しい書き込みがされた際の、古い履歴オブジェクトの削除を行う
 			while (undo < 0) {
-				Element previous = elements.remove(elements.size() - 1);
+				elements.remove(elements.size() - 1);
 				undo++;
 			}
 			elements.add(element);
-			mode = MODE_LINE;
+//			mode = MODE_LINE;
 			invalidate();
 			
 			paintAA.ivUndo = (ImageView) paintAA.findViewById(R.id.imageView_undo);
@@ -221,12 +223,12 @@ public class PaintView extends View {
 			setButtonEnabled(paintAA.ivUndo,true);
 			setButtonEnabled(paintAA.ivRedo,false);
 
-//			try {
-//				mp.stop();
-//			} catch (Exception er) {
-//			} finally {
-//				mp.release();
-//			}
+			try {
+				mp.stop();
+			} catch (Exception er) {
+			} finally {
+				mp.release();
+			}
 			break;
 		default:
 			break;

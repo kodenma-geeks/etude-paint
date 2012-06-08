@@ -98,7 +98,9 @@ public class PaintApplicationActivity extends Activity implements View.OnClickLi
 			}
 			break;
 		case INTENT_FOR_CONFIG_VIEW:
-			paintView.setBackgroundColor(ConfigView.getBgColor(this)); // ”wŒiF•ÏXˆ—
+			int c = ConfigView.getBgColor(this); // ”wŒiF•ÏXˆ—
+			paintView.setBackgroundColor(c);// ”wŒiF•ÏXˆ—
+			paintView.bgColor =  c;
 			paintView.mode = ConfigView.getStamp(this);
 			paintView.bgmFlag = ConfigView.getSound(this);
 			break;
@@ -126,7 +128,7 @@ public class PaintApplicationActivity extends Activity implements View.OnClickLi
 			Toast.makeText(getApplicationContext(), Integer.toHexString(paintView.getColor()),Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.imageView_eraser:
-			Toast.makeText(this, "‚Ü‚¾‚Å‚·", Toast.LENGTH_SHORT).show();
+			paintView.eraserMode = !paintView.eraserMode;
 			break;
 		case R.id.imageView_undo: paintView.historyBack(); break;
 		case R.id.imageView_redo: paintView.historyForward(); break;

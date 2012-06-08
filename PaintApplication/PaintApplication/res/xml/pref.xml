@@ -11,7 +11,7 @@
             android:summary="Change selected background color"
             android:title="@string/conf_bgcolor_title" />
         <ListPreference
-            android:defaultValue="1"
+            android:defaultValue="-1"
             android:dialogTitle="@string/conf_stamp_title"
             android:entries="@array/stamp_list_entries"
             android:entryValues="@array/stamp_list_entryvalues"
