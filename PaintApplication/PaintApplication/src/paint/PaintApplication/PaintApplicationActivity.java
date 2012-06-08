@@ -16,43 +16,25 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class PaintApplicationActivity extends Activity implements
-		View.OnClickListener {
+public class PaintApplicationActivity extends Activity implements View.OnClickListener {
 
-	public static final int SAMPLE_APP = 2;
-	public static int PAINT_APP = 1;
-	PaintView paintView;
-//	public static int selectColor;
-//	int color;
-//	int thick;
-//	final static int FUTOSA_MAX = 50; // 太さの最大値
-//	Intent it;
-	static int mode = PaintView.MODE_LINE;
-	// static int mode = PaintView.MODE_STAMP_CIRCLE;
-	static boolean bgmFlag = true;
+	private final int INTENT_FOR_CONFIG_VIEW = 1;
+	private final int INTENT_FOR_PAINT_APPLICATION_THICK = 2;
 	
-	// サブメニューアイコン画像宣言
-
-	ImageView ivBrush;
-	ImageView ivColor;
-	ImageView ivEraser;
+	private PaintView paintView;
 	ImageView ivUndo;
 	ImageView ivRedo;
-//	static ImageView ivUndo;
-//	static ImageView ivRedo;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		paintView = new PaintView(this);
 		setContentView(R.layout.main);// メインにカスタムビューを追加
-		paintView = (PaintView) findViewById(R.id.paintView);
+		paintView = (PaintView)findViewById(R.id.paintView);
 
 		ImageView ivBrush = (ImageView) findViewById(R.id.imageView_brush);
 		ImageView ivColor = (ImageView) findViewById(R.id.imageView_color);
 		ImageView ivEraser = (ImageView) findViewById(R.id.imageView_eraser);
-		ImageView ivUndo = (ImageView) findViewById(R.id.imageView_undo);
-		ImageView ivRedo = (ImageView) findViewById(R.id.imageView_redo);
+		ivUndo = (ImageView) findViewById(R.id.imageView_undo);
+		ivRedo = (ImageView) findViewById(R.id.imageView_redo);
 
 		ivBrush.setOnClickListener(this);
 		ivColor.setOnClickListener(this);
@@ -64,21 +46,10 @@ public class PaintApplicationActivity extends Activity implements
 		ivUndo.setAlpha(128);
 		ivRedo.setEnabled(false);
 		ivRedo.setAlpha(128);
-		
-//		ivUndo.setEnabled(false);
-//		ivUndo.setAlpha(128);
-//		ivRedo.setEnabled(false);
-//		ivRedo.setAlpha(128);
-
-		// it = getIntent();
-		// mode = it.getIntExtra("mode", 0);
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	@Override public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.menu, menu);
+		getMenuInflater().inflate(R.menu.menu, menu);
 		return true;
 	}
 
@@ -86,104 +57,73 @@ public class PaintApplicationActivity extends Activity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.configId: // 設定ボタン押下時
-
 			Intent it = new Intent(getApplicationContext(), ConfigView.class);
-			startActivityForResult(it, PAINT_APP);
+			startActivityForResult(it, INTENT_FOR_CONFIG_VIEW);
 			break;
-
 		case R.id.clearId: // クリアボタン押下時 (はい/いいえのダイアログ表示)
 			AlertDialog.Builder adBuilder = new AlertDialog.Builder(this);
 			adBuilder.setTitle(R.string.clear);
 			adBuilder.setMessage(R.string.all_clear_message);
 			adBuilder.setPositiveButton(getString(R.string.yes),
-					new DialogInterface.OnClickListener() {
-
-						public void onClick(DialogInterface dialog, int which) {
-
-							paintView.clearPathList();
-
-						}
-					});
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						paintView.clearPathList();
+					}
+				});
 			adBuilder.setNegativeButton(getString(R.string.no),
-					new DialogInterface.OnClickListener() {
-
-						public void onClick(DialogInterface dialog, int which) {
-
-						}
-					});
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				});
 			adBuilder.show();
 			break;
-			
 		case R.id.saveId: // 保存ボタン押下時
 			new AlertDialog.Builder(this)
-					.setTitle(R.string.save)
-					.setMessage(
-							paintView.isSaveToFile(this) ? R.string.save_success
-									: R.string.save_fail)
-					.setPositiveButton(R.string.ok, null).show();
+				.setTitle(R.string.save)
+				.setMessage(paintView.isSaveToFile(this) ? R.string.save_success : R.string.save_fail)
+				.setPositiveButton(R.string.ok, null).show();
 			break;
-		/*
-		 * case R.id.colorId: // カラーボタン押下時 ColorPickerDialog mColorPickerDialog;
-		 * 
-		 * mColorPickerDialog = new ColorPickerDialog(this, new
-		 * ColorPickerDialog.OnColorChangedListener() {
-		 * 
-		 * public void colorChanged(int color) { selectColor = color;
-		 * PaintView.setColor(color); } }, Color.WHITE);
-		 * 
-		 * mColorPickerDialog.show();
-		 * 
-		
-		 */
-//		// 太さ
-//		case R.id.futosaId: // 太さボタン押下時
-//			Intent intent = new Intent(PaintApplicationActivity.this,
-//					PaintApplicationFutosa.class);
-//			intent.putExtra("THICK", PaintView.getFutosa());
-//			startActivityForResult(intent, SAMPLE_APP);
-//			break;
 		}
-
 		return true;
 	}
-
 	public void onActivityResult(int reqcode, int result, Intent it) {
 		// 太さも設定画面からの戻り処理
-		if (reqcode == SAMPLE_APP) {
+		switch(reqcode) {
+		case INTENT_FOR_PAINT_APPLICATION_THICK:
 			if (result == RESULT_OK) {
 				int ft = it.getIntExtra("THICK", 2);
+				paintView.setThick(ft);
 				boolean aa = it.getBooleanExtra("ANTIALIAS", true);
-				PaintView.setThick(ft);
-				PaintView.setAntiAlias(aa);
+				paintView.setAntiAlias(aa);
 			}
-		} else{
+			break;
+		case INTENT_FOR_CONFIG_VIEW:
 			paintView.setBackgroundColor(ConfigView.getBgColor(this)); // 背景色変更処理
-			mode = ConfigView.getStamp(this);
-			bgmFlag = ConfigView.getSound(this);
+			paintView.mode = ConfigView.getStamp(this);
+			paintView.bgmFlag = ConfigView.getSound(this);
+			break;
 		}
 	}
-
 	// ***********サブメニュークリックイベント*********************************
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.imageView_brush:
-			PaintView.undoFlag = false;
-			Intent intent = new Intent(PaintApplicationActivity.this, PaintApplicationThick.class);
-			intent.putExtra("THICK", PaintView.getThick());
-			intent.putExtra("ANTIALIAS", PaintView.isAntiAlias());
-			startActivityForResult(intent, SAMPLE_APP);
+			paintView.undoFlag = false;
+			Intent intent = new Intent(this, PaintApplicationThick.class);
+			intent.putExtra("THICK", paintView.getThick());
+			intent.putExtra("COLOR", paintView.getColor());
+			intent.putExtra("ANTIALIAS", paintView.isAntiAlias());
+			startActivityForResult(intent, INTENT_FOR_PAINT_APPLICATION_THICK);
 			break;
 		case R.id.imageView_color:
-			ColorPickerDialog mColorPickerDialog;
-			mColorPickerDialog = new ColorPickerDialog(this, new ColorPickerDialog.OnColorChangedListener() {
+			ColorPickerDialog dlg;
+			dlg = new ColorPickerDialog(this, new ColorPickerDialog.OnColorChangedListener() {
 				public void colorChanged(int color) {
-//					selectColor = color;
-					PaintView.setColor(color);
+					paintView.setColor(color);
 				}
 			}, Color.WHITE);
-			mColorPickerDialog.show();
-			Toast.makeText(getApplicationContext(), Integer.toHexString(PaintView.getColor()),Toast.LENGTH_SHORT).show();
-
+			dlg.show();
+			Toast.makeText(getApplicationContext(), Integer.toHexString(paintView.getColor()),Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.imageView_eraser:
 			Toast.makeText(this, "まだです", Toast.LENGTH_SHORT).show();
@@ -192,5 +132,4 @@ public class PaintApplicationActivity extends Activity implements
 		case R.id.imageView_redo: paintView.historyForward(); break;
 		}
 	}
-
 }

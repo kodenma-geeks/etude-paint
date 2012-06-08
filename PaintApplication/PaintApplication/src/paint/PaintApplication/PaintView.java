@@ -23,65 +23,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 public class PaintView extends View {
-	static final int MODE_LINE = -1;
-	static final int MODE_STAMP_TRIANGLE = 0;
-	static final int MODE_STAMP_RECTANGLE = 1;
-	static final int MODE_STAMP_CIRCLE = 2;
-	static final int MODE_STAMP_STAR = 3;
-	static final int MODE_STAMP_TRIANGLE_DURATION = 4;
-	static final int MODE_STAMP_RECTANGLE_DURATION = 5;
-	static final int MODE_STAMP_CIRCLE_DURATION = 6;
-	static final int MODE_STAMP_STAR_DURATION = 7;
-	// フィールド
-	private float oldX = 0f; // ひとつ前のX座標保持
-	private float oldY = 0f; // ひとつ前のY座標保持
-	protected Path path; // パス情報を保持
-	private Bitmap bitmap = null; // キャッシュからキャプチャ画像
-
-	protected static int undo = 0; // アンドゥ処理のためのカウント変数
-	static boolean undoFlag = true;	// 再描画バグのテストフラグ
-
-	private AllLine pts = null; // 線情報クラスのインスタンス
-	ArrayList<AllLine> draw_list = new ArrayList<AllLine>(); // 全てのパス情報を保持
-	Paint paint;
-	private static int color = Color.WHITE; // 線の色
-	private static int thick = 2; // 線の太さ
-	private static boolean antiAlias = true;	// アンチエイリアス
-
-	final static int THICK_MAX = 50; 		// 太さの最大値
-	final static int THICK_MIN = 1; 		// 太さの最大値	//	浜田追加
-	MediaScannerConnection mc; // メディアスキャン
-	onBgm onbgm = new onBgm();
-	public MediaPlayer mp = null; // BGM用
-	public boolean bgmFlag = true; // BGMflag用
-	public static Context _context = null; 
-
-//	PaintApplicationActivity paintApplicationActivity = new PaintApplicationActivity();
-	PaintApplicationActivity paintAA = (PaintApplicationActivity)_context;
-	
-	// コンストラクタ
-	public PaintView(Context context) {
-		super(context);
-		_context = context;
-		undo = 0;
-		path = null;
-		paint = null;
-	}
-//コンストラクタ
-	public PaintView(Context context, AttributeSet attrs) {
-		  super(context, attrs);
-		  undo = 0;
-			path = null;
-			paint = null;
-	}
-
-	// 描画時に呼び出し
-	public void onDraw(Canvas canvas) {
-
-		if (pts == null) { // 線が無いときは描画しない
-			return;
-		}
-		if (undoFlag) { 
+	private class Element {
+		public Path path = new Path(); 			// path情報を保持
+		public Paint paint = new Paint(); 		// paint情報を保持
+		boolean eraser =  false;
+		private Element(){
 			paint.setColor(color); // 線の色
 			paint.setAntiAlias(antiAlias); // アンチエイリアスの有無
 			paint.setStyle(Paint.Style.STROKE); // 線のスタイル（STROKE：図形の輪郭線のみ表示、FILL:塗る）
@@ -89,80 +35,114 @@ public class PaintView extends View {
 			paint.setStrokeCap(Paint.Cap.ROUND); // 　線の先端スタイル（ROUND：丸くする）
 			paint.setStrokeJoin(Paint.Join.ROUND); // 線と線の接続点のスタイル（ROUND：丸くする）
 		}
+	}
+	private final int MODE_LINE = -1;
+	private final int MODE_STAMP_TRIANGLE = 0;
+	private final int MODE_STAMP_RECTANGLE = 1;
+	private final int MODE_STAMP_CIRCLE = 2;
+	private final int MODE_STAMP_STAR = 3;
+	private final int MODE_STAMP_TRIANGLE_DURATION = 4;
+	private final int MODE_STAMP_RECTANGLE_DURATION = 5;
+	private final int MODE_STAMP_CIRCLE_DURATION = 6;
+	private final int MODE_STAMP_STAR_DURATION = 7;
+	
+	int mode = MODE_LINE;
+	boolean bgmFlag = true;
+	private float oldX = 0f; // ひとつ前のX座標保持
+	private float oldY = 0f; // ひとつ前のY座標保持
+	
+	private ArrayList<Element> elements = new ArrayList<Element>(); // 全てのパス情報を保持
+	private Element element = null; // 線情報クラスのインスタンス
+//	private Element workingElement = null; // 線情報クラスのインスタンス
+	
+	private int undo = 0; // アンドゥ処理のためのカウント変数
+	boolean undoFlag = true;	// 再描画バグのテストフラグ
 
-		for (int i = 0; i < draw_list.size() + undo; i++) {
-			Path pt = draw_list.get(i).path;
-			Paint pa = draw_list.get(i).paint;
+	private int color = Color.WHITE; // 線の色
+	private int thick = 2; // 線の太さ
+	private boolean antiAlias = true;	// アンチエイリアス
+
+	private MediaScannerConnection mc; // メディアスキャン
+	private onBgm onbgm = new onBgm();
+	private MediaPlayer mp = null; // BGM用
+	private static Context _context = null; 
+
+	PaintApplicationActivity paintAA;
+	
+	public PaintView(Context context) {
+		this(context, null);
+	}
+	public PaintView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		paintAA = (PaintApplicationActivity)getContext();
+		undo = 0;
+	}
+	public void onDraw(Canvas canvas) {
+
+		if (element == null) { // 線が無いときは描画しない
+			return;
+		}
+		for (int i = 0; i < elements.size() + undo; i++) {
+			Path pt = elements.get(i).path;
+			Paint pa = elements.get(i).paint;
 			canvas.drawPath(pt, pa);
 		}
-
 		if (undoFlag) { 
-			canvas.drawPath(path, paint);
+			canvas.drawPath(element.path, element.paint);
 		}
 	}
-
-	// 画面のタッチ時に呼び出し
 	public boolean onTouchEvent(MotionEvent e) {
-
 		// タッチイベント判定処理
 		switch (e.getAction()) {
 		case MotionEvent.ACTION_DOWN: // タッチして画面を押した時
-
-			pts = new AllLine();
-			pts.paint = new Paint();
-			pts.path = new Path();
-			path = new Path();
-			paint = new Paint();
+			element = new Element();
 
 			oldX = e.getX();
 			oldY = e.getY();
-			path.moveTo(oldX, oldY);
+			element.path.moveTo(oldX, oldY);
 
-			onbgm.onBgmran();
-		    mp.setLooping(true);
-			mp.start();
+//			onbgm.onBgmran();
+//		    mp.setLooping(true);
+//			mp.start();
 			break;
 
 		case MotionEvent.ACTION_MOVE: // タッチしてから離すまでの移動して間
 			undoFlag = true;
 			float sq = (float)Math.sqrt((e.getX() - oldX)*(e.getX() - oldX)+(e.getY() - oldY)*(e.getY() - oldY));
-			switch (PaintApplicationActivity.mode) {
+			switch (mode) {
 			case MODE_LINE:
-//				oldX += (e.getX() - oldX);
-//				oldY += (e.getY() - oldY);
-//				path.lineTo(oldX, oldY);
 				// 滑らかモード
 				int TOLERANCE = 6;
 				if (Math.abs(e.getX() - oldX) >= TOLERANCE || Math.abs(e.getY() - oldY) >= TOLERANCE) {
-					path.quadTo(oldX, oldY, (oldX + e.getX()) / 2, (oldY + e.getY()) / 2);
+					element.path.quadTo(oldX, oldY, (oldX + e.getX()) / 2, (oldY + e.getY()) / 2);
 				}
 				oldX = e.getX(); oldY = e.getY();
 				break;
 				// △　スタンプ
 			case MODE_STAMP_TRIANGLE:
-				path.reset();
-				path.moveTo(oldX, oldY-50f*(sq/50));
-				path.lineTo(oldX-50f*(sq/50), oldY+20f*(sq/50));
-				path.lineTo(oldX+50f*(sq/50), oldY+20f*(sq/50));
-				path.lineTo(oldX, oldY-50f*(sq/50));		
+				element.path.reset();
+				element.path.moveTo(oldX, oldY-50f*(sq/50));
+				element.path.lineTo(oldX-50f*(sq/50), oldY+20f*(sq/50));
+				element.path.lineTo(oldX+50f*(sq/50), oldY+20f*(sq/50));
+				element.path.lineTo(oldX, oldY-50f*(sq/50));		
 				break;
 			// ???@?X?^???v
 			case MODE_STAMP_RECTANGLE:
-				path.reset();
-				path.moveTo(oldX-50f*(sq/50), oldY-50f*(sq/50));
-				path.lineTo(oldX+50f*(sq/50), oldY-50f*(sq/50));
-				path.lineTo(oldX+50f*(sq/50), oldY+50f*(sq/50));
-				path.lineTo(oldX-50f*(sq/50), oldY+50f*(sq/50));
-				path.lineTo(oldX-50f*(sq/50), oldY-50f*(sq/50));
+				element.path.reset();
+				element.path.moveTo(oldX-50f*(sq/50), oldY-50f*(sq/50));
+				element.path.lineTo(oldX+50f*(sq/50), oldY-50f*(sq/50));
+				element.path.lineTo(oldX+50f*(sq/50), oldY+50f*(sq/50));
+				element.path.lineTo(oldX-50f*(sq/50), oldY+50f*(sq/50));
+				element.path.lineTo(oldX-50f*(sq/50), oldY-50f*(sq/50));
 				break;
 			// ???@?X?^???v
 			case MODE_STAMP_CIRCLE:
-				path.reset();
-				path.addCircle(oldX, oldY, 50f*(sq/50), Direction.CW);	
+				element.path.reset();
+				element.path.addCircle(oldX, oldY, 50f*(sq/50), Direction.CW);	
 				break;
 			// ???@?X?^???v
 			case MODE_STAMP_STAR:
-				path.reset();
+				element.path.reset();
 				float theta = (float)(Math.PI * 72 / 180);
 				float r = 50f;
 				PointF center = new PointF(oldX, oldY);
@@ -170,31 +150,31 @@ public class PaintView extends View {
 				float dx2 = (float)(r*Math.sin(2*theta));
 				float dy1 = (float)(r*Math.cos(theta));
 				float dy2 = (float)(r*Math.cos(2*theta));
-				path.moveTo(center.x, center.y-r*(sq/50));
-				path.lineTo(center.x-dx2*(sq/50), center.y-dy2*(sq/50));
-				path.lineTo(center.x+dx1*(sq/50), center.y-dy1*(sq/50));
-				path.lineTo(center.x-dx1*(sq/50), center.y-dy1*(sq/50));
-				path.lineTo(center.x+dx2*(sq/50), center.y-dy2*(sq/50));
-				path.lineTo(center.x, center.y-r*(sq/50));
+				element.path.moveTo(center.x, center.y-r*(sq/50));
+				element.path.lineTo(center.x-dx2*(sq/50), center.y-dy2*(sq/50));
+				element.path.lineTo(center.x+dx1*(sq/50), center.y-dy1*(sq/50));
+				element.path.lineTo(center.x-dx1*(sq/50), center.y-dy1*(sq/50));
+				element.path.lineTo(center.x+dx2*(sq/50), center.y-dy2*(sq/50));
+				element.path.lineTo(center.x, center.y-r*(sq/50));
 				break;
 				
 			case MODE_STAMP_TRIANGLE_DURATION:
-				path.moveTo(oldX, oldY-50f*(sq/50));
-				path.lineTo(oldX-50f*(sq/50), oldY+20f*(sq/50));
-				path.lineTo(oldX+50f*(sq/50), oldY+20f*(sq/50));
-				path.lineTo(oldX, oldY-50f*(sq/50));		
+				element.path.moveTo(oldX, oldY-50f*(sq/50));
+				element.path.lineTo(oldX-50f*(sq/50), oldY+20f*(sq/50));
+				element.path.lineTo(oldX+50f*(sq/50), oldY+20f*(sq/50));
+				element.path.lineTo(oldX, oldY-50f*(sq/50));		
 				break;
 			// ???@?X?^???v
 			case MODE_STAMP_RECTANGLE_DURATION:
-				path.moveTo(oldX-50f*(sq/50), oldY-50f*(sq/50));
-				path.lineTo(oldX+50f*(sq/50), oldY-50f*(sq/50));
-				path.lineTo(oldX+50f*(sq/50), oldY+50f*(sq/50));
-				path.lineTo(oldX-50f*(sq/50), oldY+50f*(sq/50));
-				path.lineTo(oldX-50f*(sq/50), oldY-50f*(sq/50));
+				element.path.moveTo(oldX-50f*(sq/50), oldY-50f*(sq/50));
+				element.path.lineTo(oldX+50f*(sq/50), oldY-50f*(sq/50));
+				element.path.lineTo(oldX+50f*(sq/50), oldY+50f*(sq/50));
+				element.path.lineTo(oldX-50f*(sq/50), oldY+50f*(sq/50));
+				element.path.lineTo(oldX-50f*(sq/50), oldY-50f*(sq/50));
 				break;
 			// ???@?X?^???v
 			case MODE_STAMP_CIRCLE_DURATION:
-				path.addCircle(oldX, oldY, 50f*(sq/50), Direction.CW);	
+				element.path.addCircle(oldX, oldY, 50f*(sq/50), Direction.CW);	
 				break;
 			// ???@?X?^???v
 			case MODE_STAMP_STAR_DURATION:
@@ -205,63 +185,48 @@ public class PaintView extends View {
 				dx2 = (float)(r*Math.sin(2*theta));
 				dy1 = (float)(r*Math.cos(theta));
 				dy2 = (float)(r*Math.cos(2*theta));
-				path.moveTo(center.x, center.y-r*(sq/50));
-				path.lineTo(center.x-dx2*(sq/50), center.y-dy2*(sq/50));
-				path.lineTo(center.x+dx1*(sq/50), center.y-dy1*(sq/50));
-				path.lineTo(center.x-dx1*(sq/50), center.y-dy1*(sq/50));
-				path.lineTo(center.x+dx2*(sq/50), center.y-dy2*(sq/50));
-				path.lineTo(center.x, center.y-r*(sq/50));
+				element.path.moveTo(center.x, center.y-r*(sq/50));
+				element.path.lineTo(center.x-dx2*(sq/50), center.y-dy2*(sq/50));
+				element.path.lineTo(center.x+dx1*(sq/50), center.y-dy1*(sq/50));
+				element.path.lineTo(center.x-dx1*(sq/50), center.y-dy1*(sq/50));
+				element.path.lineTo(center.x+dx2*(sq/50), center.y-dy2*(sq/50));
+				element.path.lineTo(center.x, center.y-r*(sq/50));
 				break;
 			default:
 				break;
 			}
-//			draw_list.add(pts);//浜田
 			invalidate();			
 			break;
 		case MotionEvent.ACTION_UP: // タッチして離した時
-			switch (PaintApplicationActivity.mode) {
+			switch (mode) {
 			case MODE_LINE:
 				oldX = e.getX();
 				oldY = e.getY();
-				path.lineTo(oldX, oldY);
+				element.path.lineTo(oldX, oldY);
 				break;
 			default:
 				break;
 			}
-
-			pts.path = path;
-			pts.paint = paint;
-
+			// UNDOの後に新しい書き込みがされた際の、古い履歴オブジェクトの削除を行う
 			while (undo < 0) {
-				AllLine previous = draw_list.get(draw_list.size() - 1);
-				draw_list.remove(previous);
-				previous.reset();
-				invalidate();
+				Element previous = elements.remove(elements.size() - 1);
 				undo++;
 			}
-
-			pts.path = path;
-			pts.paint = paint;
-			draw_list.add(pts);
+			elements.add(element);
+			mode = MODE_LINE;
+			invalidate();
+			
 			paintAA.ivUndo = (ImageView) paintAA.findViewById(R.id.imageView_undo);
 			paintAA.ivRedo = (ImageView) paintAA.findViewById(R.id.imageView_redo);
-
-			
 			setButtonEnabled(paintAA.ivUndo,true);
 			setButtonEnabled(paintAA.ivRedo,false);
-			// キャッシュからキャプチャを作成、そのためキャッシュをON
-			setDrawingCacheEnabled(true);
-			bitmap = Bitmap.createBitmap(getDrawingCache());
-			// キャッシュはもうとらないのでキャッシュをOFF
-			setDrawingCacheEnabled(false);
-			PaintApplicationActivity.mode = MODE_LINE;
-			invalidate();
-			try {
-				mp.stop();
-			} catch (Exception er) {
-			} finally {
-				mp.release();
-			}
+
+//			try {
+//				mp.stop();
+//			} catch (Exception er) {
+//			} finally {
+//				mp.release();
+//			}
 			break;
 		default:
 			break;
@@ -273,13 +238,10 @@ public class PaintView extends View {
 	public void historyBack() {
 		undo--;
 		setButtonEnabled(paintAA.ivRedo,true);
-		if (draw_list.size() + undo == 0) {
+		if (elements.size() + undo == 0) {
 			setButtonEnabled(paintAA.ivUndo,false);
 		}
 		undoFlag = false;
-
-//		paintApplicationActivity.ivRedo.setEnabled(true);
-//		paintApplicationActivity.ivRedo.setAlpha(255);
 		invalidate();
 	}
 
@@ -291,15 +253,13 @@ public class PaintView extends View {
 			setButtonEnabled(paintAA.ivRedo,false);
 		}
 		undoFlag = false;
-//		path = draw_list.get(draw_list.size() + undo).path;
-//		paint = draw_list.get(draw_list.size() + undo).paint;
 		invalidate();
 	}
 
 	// クリア
 	public void clearPathList() {
-		draw_list.clear();
-		pts = null;
+		elements.clear();
+		element = null;
 		undo = 0;
 		oldX = 0f;
 		oldY = 0f;
@@ -310,6 +270,12 @@ public class PaintView extends View {
 
 	// 画像ファイルを保存
 	public boolean isSaveToFile(PaintApplicationActivity paint) {
+		// キャッシュからキャプチャを作成、そのためキャッシュをON
+		setDrawingCacheEnabled(true);
+		Bitmap bitmap = Bitmap.createBitmap(getDrawingCache());
+		// キャッシュはもうとらないのでキャッシュをOFF
+		setDrawingCacheEnabled(false);
+		
 		// 保存先の決定(存在しない場合は作成)
 		File file;
 		String path = Environment.getExternalStorageDirectory()
@@ -354,55 +320,34 @@ public class PaintView extends View {
 	void mediaScanExecute(PaintApplicationActivity paint, final String file) {
 		mc = new MediaScannerConnection(paint,
 				new MediaScannerConnection.MediaScannerConnectionClient() {
-					public void onScanCompleted(String path, Uri uri) {
-						mc.disconnect();
-					}
-
 					public void onMediaScannerConnected() {
 						mc.scanFile(file, "image/png");
+					}
+					public void onScanCompleted(String path, Uri uri) {
+						mc.disconnect();
 					}
 				});
 		mc.connect();
 	}
 
-
-	public static int getColor() {
-		return color;
-	}
-
-	public static void setColor(int color) {
-		PaintView.color = color;
-	}
-
-	public static int getThick() {
-		return thick;//浜田
-	}
-
-	public static void setThick(int futosa) {
-		if(futosa < THICK_MIN){
-			futosa = THICK_MIN;
-		}
-		PaintView.thick = futosa;
-	}
-	public static boolean isAntiAlias() {
-		return antiAlias;
-	}
-
-	public static void setAntiAlias(boolean aa) {
-		PaintView.antiAlias = aa;
-	}
-
+	int getColor()				{ return color; }
+	void setColor(int c)		{ color = c; }
+	int getThick()				{ return thick; }
+	void setThick(int futosa)	{ thick = futosa; }
+	boolean isAntiAlias()		{ return antiAlias; }
+	void setAntiAlias(boolean aa){ antiAlias = aa; }
+	
 	public class onBgm {
 //		public MediaPlayer mp = null; // BGM用
 //		public boolean bgmFlag = true; // BGMflag用
 
-		private Context getContext() {
-
-			return _context;
-		}
+//		private Context getContext() {
+//
+//			return _context;
+//		}
 
 		public void onBgmran() {
-			if (PaintApplicationActivity.bgmFlag == true) {
+			if (bgmFlag == true) {
 				int ran = (int) (Math.random() * 10) + 1;
 				{
 					switch (ran) {
