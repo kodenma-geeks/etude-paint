@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 public class PaintApplicationActivity extends Activity implements View.OnClickListener {
 
+	// 
 	private final int INTENT_FOR_CONFIG_VIEW = 1;
 	private final int INTENT_FOR_PAINT_APPLICATION_THICK = 2;
 	
