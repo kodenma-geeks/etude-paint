@@ -104,6 +104,10 @@ public class PaintApplicationActivity extends Activity implements View.OnClickLi
 			paintView.bgColor =  c;
 			paintView.mode = ConfigView.getStamp(this);
 			paintView.bgmFlag = ConfigView.getSound(this);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.clear(); 
+			editor.commit();
 			break;
 		}
 	}
