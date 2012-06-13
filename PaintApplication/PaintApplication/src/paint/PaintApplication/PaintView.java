@@ -71,6 +71,7 @@ public class PaintView extends View {
 	private boolean undoFlag = true;		// 再描画バグのテストフラグ
 	private ImageView ivUndo;				// Undoボタン
 	private ImageView ivRedo;				// Rndoボタン
+	private ImageView ivEraser;				// Eraserボタン
 	// その他
 	private BgmPlayer bgmPlayer;			// 効果音出力オブジェクト
 	private MediaScannerConnection mc;		// メディアスキャナへのコネクタ
@@ -91,11 +92,14 @@ public class PaintView extends View {
 	int getBrushColor()				{ return brushColor; }
 	int getThickness()				{ return thickness; }
 	boolean isAntiAlias()			{ return antiAlias; }
+	int getBgColor()				{ return bgColor; }
+
 	// ビューのレイアウト確定時
 	@Override public void onLayout(boolean changed, int left, int top, int right, int bottom) {
 		Activity parent = (Activity)getContext();
 		ivUndo = (ImageView)parent.findViewById(R.id.imageView_undo);
 		ivRedo = (ImageView)parent.findViewById(R.id.imageView_redo);
+		ivEraser = (ImageView)parent.findViewById(R.id.imageView_eraser);
 		setButtonEnabled(ivUndo, false);
 		setButtonEnabled(ivRedo, false);
 	}
@@ -103,6 +107,9 @@ public class PaintView extends View {
 		if (element != null) { // カレントの描画エレメントが無いときは描画しない
 			for (int i=0; i<elements.size() + undo; i++) {
 				Element e = elements.get(i);
+				if(e.eraser) {
+					e.paint.setColor(bgColor);		// 浜田　if文の追加
+				}
 				canvas.drawPath(e.path, e.paint);
 			}
 			if (undoFlag) { 
@@ -187,6 +194,7 @@ public class PaintView extends View {
 		invalidate();
 		setButtonEnabled(ivUndo, false);
 		setButtonEnabled(ivRedo, false);
+		eraserMode = false;
 	}
 	// Undo, Redoボタンのenable/disable処理
 	private void setButtonEnabled(ImageView v, boolean enable){
@@ -254,7 +262,7 @@ public class PaintView extends View {
 		}
 		Date d = new Date();
 		// 一意となるファイル名を取得（タイムスタンプ）
-		String fileName = String.format("%4d%02d%02d-%02d%02d%02d.png",
+		String fileName = String.format("%4d%02d%02d-%02d%02d%02d",
 				(1900 + d.getYear()), d.getMonth() + 1, d.getDate(),
 				d.getHours(), d.getMinutes(), d.getSeconds());
 		file = new File(path + fileName + ".png");

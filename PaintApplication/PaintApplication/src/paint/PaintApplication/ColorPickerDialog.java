@@ -15,10 +15,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
 
 public class ColorPickerDialog extends Dialog {
 
-    public interface OnColorChangedListener {
+	CheckBox cb;
+
+	public interface OnColorChangedListener {
         void colorChanged(int color);
     }
 
@@ -27,6 +31,10 @@ public class ColorPickerDialog extends Dialog {
 
     private static class ColorPickerView extends View {
 
+//    	CheckBox cb;
+    	//shima test
+    	// shima test2
+    	//shima test3
     	private Paint mPaint, mPaintC;
         private Paint mOKPaint;
         private final int[] mColors;
@@ -67,14 +75,17 @@ public class ColorPickerDialog extends Dialog {
             mOKPaint.setStyle(Paint.Style.FILL);
             mOKPaint.setColor(selectColor);
             mOKPaint.setStrokeWidth(5);
+            
+//            cb = new CheckBox(c);
+
         }
         
         private boolean mTrackingOK;
         private boolean mHighlightOK;
         
-        private static final int CENTER_X = 100;
-        private static final int CENTER_Y = 100;
-        private static final int CENTER_RADIUS = 24;
+        private static final int CENTER_X = 150;
+        private static final int CENTER_Y = 150;
+        private static final int CENTER_RADIUS = 36;
         private static final float OK_X0 = - CENTER_X/2;
         private static final float OK_X1 =   CENTER_X/2;
         private static final float OK_Y0 = (float) (CENTER_X * 1.2);
@@ -319,10 +330,17 @@ public class ColorPickerDialog extends Dialog {
                 dismiss();
             }
         };
-
+        LinearLayout ll = new LinearLayout(getContext());
+//        setContentView(ll);
+        cb = new CheckBox(getContext());
+        
         ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
         setContentView(new ColorPickerView(getContext(), l, mInitialColor), lp);
         setTitle("- Color -");
+        
+//        cb = new CheckBox(getContext());
+//        ll = addView(cb);
+        
     }
 
 }

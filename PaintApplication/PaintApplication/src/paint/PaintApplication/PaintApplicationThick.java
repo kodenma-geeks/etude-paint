@@ -26,7 +26,7 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 	private final int HEIGHT = 200;
 	private final int THICK_MAX = 50; 		// 太さの最大値
 	private final int THICK_MIN = 1; 		// 太さの最大値
-	
+
 //	private SeekBar seekBar;
 	private TextView seekText;   
 	private Button okBtn, canclBtn;
@@ -36,6 +36,7 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 	private Intent it;
 	private int thick;
 	private int color;
+	private int bgColor;
 	private boolean antiAlias;
 
 	@Override public void onCreate(Bundle savedInstanceState) {
@@ -47,9 +48,12 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 		it = getIntent();
 		thick = it.getIntExtra("THICK", 2);
 		color = it.getIntExtra("COLOR", Color.WHITE);
+		bgColor = it.getIntExtra("BGCOLOR", Color.BLACK);
 		antiAlias = it.getBooleanExtra("ANTIALIAS", true); 
 
 		SampleLineView lv = new SampleLineView(this);
+		lv.setBackgroundColor(bgColor);
+
 
 		// limit設定のためのシークバー
 		SeekBar seekBar = new SeekBar(this);   
@@ -81,11 +85,11 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 		} else{
 			rbf.setChecked(true);	//　アンチエイリアスなしボタンをオン
 		}
-		
+
 		ll.addView(seekBar);
 		ll.addView(rg);
 		ll.addView(seekText);
-		
+
 		ll.addView(okBtn);
 		ll.addView(canclBtn);
 		ll.addView(lv);
@@ -94,16 +98,7 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 		rbt.setOnClickListener(new SampleClickListener());
 		rbf.setOnClickListener(new SampleClickListener());
 	}
-
-//    public void onDraw(Canvas canvas){ // ２つONDRAWがあるが、調査必要
-//		paint.setColor(Color.WHITE); // 線の色
-//		paint.setAntiAlias(true); // アンチエイリアスの有無
-//		paint.setStyle(Paint.Style.STROKE); // 線のスタイル（STROKE：図形の輪郭線のみ表示、FILL:塗る）
-//		paint.setStrokeCap(Paint.Cap.ROUND); // 　線の先端スタイル（ROUND：丸くする）
-//		paint.setStrokeJoin(Paint.Join.ROUND); // 線と線の接続点のスタイル（ROUND：丸くする）
-//
-//		canvas.drawLine(100, 500, 400, 500, paint);
-//    }    
+ 
 	// シークバー表示
 	public void onProgressChanged(SeekBar seekBar, int index, boolean fromUser){   
 		if(fromUser){ 
@@ -113,7 +108,7 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 			index += THICK_MIN;
 			seekText.setText(getResources().getString(R.string.line_thick) + index);   
 			thick = index;
-			
+
 			paint.setStrokeWidth(thick);
 		}   
 	}
