@@ -15,7 +15,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Path.Direction;
 import android.graphics.PointF;
-import android.media.MediaPlayer;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
@@ -23,6 +22,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+
 public class PaintView extends View {
 	// 描画エレメントの形状
 	private final int MODE_LINE = -1;
@@ -71,6 +71,7 @@ public class PaintView extends View {
 	private boolean undoFlag = true;		// 再描画バグのテストフラグ
 	private ImageView ivUndo;				// Undoボタン
 	private ImageView ivRedo;				// Rndoボタン
+	private ImageView ivEraser;				// Eraserボタン
 	// その他
 	private BgmPlayer bgmPlayer;			// 効果音出力オブジェクト
 	private MediaScannerConnection mc;		// メディアスキャナへのコネクタ
@@ -91,11 +92,13 @@ public class PaintView extends View {
 	int getBrushColor()				{ return brushColor; }
 	int getThickness()				{ return thickness; }
 	boolean isAntiAlias()			{ return antiAlias; }
+	int getBgColor()				{ return bgColor; }
 	// ビューのレイアウト確定時
 	@Override public void onLayout(boolean changed, int left, int top, int right, int bottom) {
 		Activity parent = (Activity)getContext();
 		ivUndo = (ImageView)parent.findViewById(R.id.imageView_undo);
 		ivRedo = (ImageView)parent.findViewById(R.id.imageView_redo);
+		ivEraser = (ImageView)parent.findViewById(R.id.imageView_eraser);
 		setButtonEnabled(ivUndo, false);
 		setButtonEnabled(ivRedo, false);
 	}
@@ -103,11 +106,10 @@ public class PaintView extends View {
 		if (element != null) { // カレントの描画エレメントが無いときは描画しない
 			for (int i=0; i<elements.size() + undo; i++) {
 				Element e = elements.get(i);
+				if (e.eraser) e.paint.setColor(bgColor);
 				canvas.drawPath(e.path, e.paint);
 			}
-			if (undoFlag) { 
-				canvas.drawPath(element.path, element.paint);
-			}
+			if (undoFlag) canvas.drawPath(element.path, element.paint);
 		}
 	}
 	public boolean onTouchEvent(MotionEvent e) {
@@ -140,9 +142,8 @@ public class PaintView extends View {
 			break;
 		case MotionEvent.ACTION_UP: // タッチして離した時
 			switch (elementMode) {
-			case MODE_LINE:
-				element.path.lineTo(newPos.x, newPos.y);
-				break;
+			case MODE_LINE:	element.path.lineTo(newPos.x, newPos.y);	break;
+			default:		elementMode = MODE_LINE;					break;
 			}
 			// UNDOの後に新しい書き込みがされた際の、古い履歴オブジェクトの削除を行う
 			while (undo < 0) {
@@ -187,6 +188,7 @@ public class PaintView extends View {
 		invalidate();
 		setButtonEnabled(ivUndo, false);
 		setButtonEnabled(ivRedo, false);
+		eraserMode = false;
 	}
 	// Undo, Redoボタンのenable/disable処理
 	private void setButtonEnabled(ImageView v, boolean enable){
@@ -242,7 +244,6 @@ public class PaintView extends View {
 		Bitmap bitmap = Bitmap.createBitmap(getDrawingCache());
 		// キャッシュはもうとらないのでキャッシュをOFF
 		setDrawingCacheEnabled(false);
-		
 		// 保存先の決定(存在しない場合は作成)
 		File file;
 		String path = Environment.getExternalStorageDirectory() + "/PaintApplication/";
@@ -254,7 +255,7 @@ public class PaintView extends View {
 		}
 		Date d = new Date();
 		// 一意となるファイル名を取得（タイムスタンプ）
-		String fileName = String.format("%4d%02d%02d-%02d%02d%02d.png",
+		String fileName = String.format("%4d%02d%02d-%02d%02d%02d",
 				(1900 + d.getYear()), d.getMonth() + 1, d.getDate(),
 				d.getHours(), d.getMinutes(), d.getSeconds());
 		file = new File(path + fileName + ".png");

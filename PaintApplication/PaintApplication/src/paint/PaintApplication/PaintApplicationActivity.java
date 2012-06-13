@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -100,6 +99,7 @@ public class PaintApplicationActivity extends Activity {
 				intent.putExtra("THICK", paintView.getThickness());
 				intent.putExtra("COLOR", paintView.getBrushColor());
 				intent.putExtra("ANTIALIAS", paintView.isAntiAlias());
+				intent.putExtra("BGCOLOR", paintView.getBgColor());
 				startActivityForResult(intent, INTENT_FOR_PAINT_APPLICATION_THICK);
 				break;
 			case R.id.imageView_color:
@@ -108,7 +108,7 @@ public class PaintApplicationActivity extends Activity {
 					public void colorChanged(int color) {
 						paintView.setBrushColor(color);
 					}
-				}, Color.WHITE);
+				}, paintView.getBrushColor());
 				dlg.show();
 				Toast.makeText(getApplicationContext(), Integer.toHexString(paintView.getBrushColor()),Toast.LENGTH_SHORT).show();
 				break;
