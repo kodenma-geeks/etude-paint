@@ -24,7 +24,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 public class PaintView extends View {
-	// •`‰æƒGƒŒƒƒ“ƒg‚ÌŒ`ó
+	// ï¿½`ï¿½ï¿½Gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½gï¿½ÌŒ`ï¿½ï¿½
 	private final int MODE_LINE = -1;
 	private final int MODE_STAMP_TRIANGLE = 0;
 	private final int MODE_STAMP_RECTANGLE = 1;
@@ -34,47 +34,47 @@ public class PaintView extends View {
 	private final int MODE_STAMP_RECTANGLE_DURATION = 5;
 	private final int MODE_STAMP_CIRCLE_DURATION = 6;
 	private final int MODE_STAMP_STAR_DURATION = 7;
-	// MoveƒCƒxƒ“ƒg”­¶”»’è‚Ì‹–—e’l
+	// Moveï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‹ï¿½ï¿½eï¿½l
 	private final int TOLERANCE = 3;
 	
-	// •`‰æƒGƒŒƒƒ“ƒg
+	// ï¿½`ï¿½ï¿½Gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½g
 	private class Element {
-		private Path path = new Path(); 						// pathî•ñ‚ğ•Û
-		private Paint paint = new Paint(); 						// paintî•ñ‚ğ•Û
-		private boolean eraser =  eraserMode;					// Á‚µƒSƒ€‚©‚Ç‚¤‚©
+		private Path path = new Path(); 						// pathï¿½ï¿½ï¿½ï¿½Ûï¿½
+		private Paint paint = new Paint(); 						// paintï¿½ï¿½ï¿½ï¿½Ûï¿½
+		public boolean eraser =  eraserMode;					// ï¿½ï¿½ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½ï¿½ï¿½Ç‚ï¿½ï¿½ï¿½
 		private Element(){
-			paint.setColor(eraserMode? bgColor : brushColor);	// •`‰æƒGƒŒƒƒ“ƒg‚ÌF
-			paint.setAntiAlias(antiAlias);						// ƒAƒ“ƒ`ƒGƒCƒŠƒAƒX‚Ì—L–³
-			paint.setStyle(Paint.Style.STROKE);					// ü‚ÌƒXƒ^ƒCƒ‹iSTROKEF}Œ`‚Ì—ÖŠsü‚Ì‚İ•\¦AFILL:“h‚éj
-			paint.setStrokeWidth(thickness);					// ü‚Ì‘¾‚³
-			paint.setStrokeCap(Paint.Cap.ROUND);				// @ü‚Ìæ’[ƒXƒ^ƒCƒ‹iROUNDFŠÛ‚­‚·‚éj
-			paint.setStrokeJoin(Paint.Join.ROUND);				// ü‚Æü‚ÌÚ‘±“_‚ÌƒXƒ^ƒCƒ‹iROUNDFŠÛ‚­‚·‚éj
+			paint.setColor(eraserMode? bgColor : brushColor);	// ï¿½`ï¿½ï¿½Gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½gï¿½ÌF
+			paint.setAntiAlias(antiAlias);						// ï¿½Aï¿½ï¿½ï¿½`ï¿½Gï¿½Cï¿½ï¿½ï¿½Aï¿½Xï¿½Ì—Lï¿½ï¿½
+			paint.setStyle(Paint.Style.STROKE);					// ï¿½ï¿½ÌƒXï¿½^ï¿½Cï¿½ï¿½ï¿½iSTROKEï¿½Fï¿½}ï¿½`ï¿½Ì—ÖŠsï¿½ï¿½Ì‚İ•\ï¿½ï¿½ï¿½AFILL:ï¿½hï¿½ï¿½j
+			paint.setStrokeWidth(thickness);					// ï¿½ï¿½Ì‘ï¿½ï¿½ï¿½
+			paint.setStrokeCap(Paint.Cap.ROUND);				// ï¿½@ï¿½ï¿½Ìï¿½[ï¿½Xï¿½^ï¿½Cï¿½ï¿½ï¿½iROUNDï¿½Fï¿½Û‚ï¿½ï¿½ï¿½ï¿½ï¿½j
+			paint.setStrokeJoin(Paint.Join.ROUND);				// ï¿½ï¿½Æï¿½ÌÚ‘ï¿½ï¿½_ï¿½ÌƒXï¿½^ï¿½Cï¿½ï¿½ï¿½iROUNDï¿½Fï¿½Û‚ï¿½ï¿½ï¿½ï¿½ï¿½j
 		}
 	}
-	private Element element = null;			// •`‰æƒGƒŒƒƒ“ƒg
+	private Element element = null;			// ï¿½`ï¿½ï¿½Gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½g
 	private ArrayList<Element> elements = new ArrayList<Element>();
-	// ƒCƒxƒ“ƒgˆÊ’u
-	private PointF oldPos  = new PointF();	// ‘O‰ñ‚ÌƒCƒxƒ“ƒgˆÊ’u
-	private PointF newPos  = new PointF();	// ¡‰ñ‚ÌƒCƒxƒ“ƒgˆÊ’u
-	private PointF downPos = new PointF();	// ACTION_DOWN‚ÌƒCƒxƒ“ƒgˆÊ’u
-	// Šeíƒ‚[ƒh
-	private int elementMode = MODE_LINE;	// •`‰æƒGƒŒƒƒ“ƒg‚ÌŒ`ó
-	private boolean eraserMode = false; 	// Á‚µƒSƒ€ƒ‚[ƒh
-	private boolean bgmMode = true;			// Œø‰Ê‰¹o—Íƒ‚[ƒh
-	// Šeí‘®«
-	private int bgColor = Color.BLACK;		// ”wŒiF
-	private int brushColor = Color.WHITE;	// ƒuƒ‰ƒV‚ÌF
-	private int thickness = 2;				// ƒuƒ‰ƒV‚Ì‘¾‚³
-	private boolean antiAlias = true;		// ƒuƒ‰ƒV‚ÌƒAƒ“ƒ`ƒGƒCƒŠƒAƒX
-	// Undo, Redo, ŠÖ˜A
-	private int undo = 0;					// ƒAƒ“ƒhƒDˆ—‚Ì‚½‚ß‚ÌƒJƒEƒ“ƒg•Ï”
-	private boolean undoFlag = true;		// Ä•`‰æƒoƒO‚ÌƒeƒXƒgƒtƒ‰ƒO
-	private ImageView ivUndo;				// Undoƒ{ƒ^ƒ“
-	private ImageView ivRedo;				// Rndoƒ{ƒ^ƒ“
-	private ImageView ivEraser;				// Eraserƒ{ƒ^ƒ“
-	// ‚»‚Ì‘¼
-	private BgmPlayer bgmPlayer;			// Œø‰Ê‰¹o—ÍƒIƒuƒWƒFƒNƒg
-	private MediaScannerConnection mc;		// ƒƒfƒBƒAƒXƒLƒƒƒi‚Ö‚ÌƒRƒlƒNƒ^
+	// ï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½Ê’u
+	private PointF oldPos  = new PointF();	// ï¿½Oï¿½ï¿½ÌƒCï¿½xï¿½ï¿½ï¿½gï¿½Ê’u
+	private PointF newPos  = new PointF();	// ï¿½ï¿½ï¿½ï¿½ÌƒCï¿½xï¿½ï¿½ï¿½gï¿½Ê’u
+	private PointF downPos = new PointF();	// ACTION_DOWNï¿½ÌƒCï¿½xï¿½ï¿½ï¿½gï¿½Ê’u
+	// ï¿½eï¿½íƒ‚ï¿½[ï¿½h
+	private int elementMode = MODE_LINE;	// ï¿½`ï¿½ï¿½Gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½gï¿½ÌŒ`ï¿½ï¿½
+	boolean eraserMode = false; 	// ï¿½ï¿½ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½h
+	private boolean bgmMode = true;			// ï¿½ï¿½Ê‰ï¿½ï¿½oï¿½Íƒï¿½ï¿½[ï¿½h
+	// ï¿½eï¿½í‘®ï¿½ï¿½
+	private int bgColor = Color.BLACK;		// ï¿½wï¿½iï¿½F
+	private int brushColor = Color.WHITE;	// ï¿½uï¿½ï¿½ï¿½Vï¿½ÌF
+	private int thickness = 2;				// ï¿½uï¿½ï¿½ï¿½Vï¿½Ì‘ï¿½ï¿½ï¿½
+	private boolean antiAlias = true;		// ï¿½uï¿½ï¿½ï¿½Vï¿½ÌƒAï¿½ï¿½ï¿½`ï¿½Gï¿½Cï¿½ï¿½ï¿½Aï¿½X
+	// Undo, Redo, ï¿½Ö˜A
+	private int undo = 0;					// ï¿½Aï¿½ï¿½ï¿½hï¿½Dï¿½ï¿½ï¿½ï¿½ï¿½Ì‚ï¿½ï¿½ß‚ÌƒJï¿½Eï¿½ï¿½ï¿½gï¿½Ïï¿½
+	private boolean undoFlag = true;		// ï¿½Ä•`ï¿½ï¿½oï¿½Oï¿½Ìƒeï¿½Xï¿½gï¿½tï¿½ï¿½ï¿½O
+	private ImageView ivUndo;				// Undoï¿½{ï¿½^ï¿½ï¿½
+	private ImageView ivRedo;				// Rndoï¿½{ï¿½^ï¿½ï¿½
+	ImageView ivEraser;				// Eraserï¿½{ï¿½^ï¿½ï¿½
+	// ï¿½ï¿½ï¿½Ì‘ï¿½
+	private BgmPlayer bgmPlayer;			// ï¿½ï¿½Ê‰ï¿½ï¿½oï¿½ÍƒIï¿½uï¿½Wï¿½Fï¿½Nï¿½g
+	private MediaScannerConnection mc;		// ï¿½ï¿½ï¿½fï¿½Bï¿½Aï¿½Xï¿½Lï¿½ï¿½ï¿½iï¿½Ö‚ÌƒRï¿½lï¿½Nï¿½^
 
 	public PaintView(Context context) { this(context, null); }
 	public PaintView(Context context, AttributeSet attrs) {
@@ -93,7 +93,7 @@ public class PaintView extends View {
 	int getThickness()				{ return thickness; }
 	boolean isAntiAlias()			{ return antiAlias; }
 	int getBgColor()				{ return bgColor; }
-	// ƒrƒ…[‚ÌƒŒƒCƒAƒEƒgŠm’è
+	// ï¿½rï¿½ï¿½ï¿½[ï¿½Ìƒï¿½ï¿½Cï¿½Aï¿½Eï¿½gï¿½mï¿½è
 	@Override public void onLayout(boolean changed, int left, int top, int right, int bottom) {
 		Activity parent = (Activity)getContext();
 		ivUndo = (ImageView)parent.findViewById(R.id.imageView_undo);
@@ -103,7 +103,7 @@ public class PaintView extends View {
 		setButtonEnabled(ivRedo, false);
 	}
 	@Override public void onDraw(Canvas canvas) {
-		if (element != null) { // ƒJƒŒƒ“ƒg‚Ì•`‰æƒGƒŒƒƒ“ƒg‚ª–³‚¢‚Æ‚«‚Í•`‰æ‚µ‚È‚¢
+		if (element != null) { // ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½gï¿½Ì•`ï¿½ï¿½Gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ‚ï¿½ï¿½Í•`ï¿½æ‚µï¿½È‚ï¿½
 			for (int i=0; i<elements.size() + undo; i++) {
 				Element e = elements.get(i);
 				if (e.eraser) e.paint.setColor(bgColor);
@@ -116,7 +116,7 @@ public class PaintView extends View {
 		newPos.x = e.getX();
 		newPos.y = e.getY();
 		switch (e.getAction()) {
-		case MotionEvent.ACTION_DOWN: // ƒ^ƒbƒ`‚µ‚Ä‰æ–Ê‚ğ‰Ÿ‚µ‚½
+		case MotionEvent.ACTION_DOWN: // ï¿½^ï¿½bï¿½`ï¿½ï¿½ï¿½Ä‰ï¿½Ê‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			element = new Element();
 			element.path.moveTo(newPos.x, newPos.y);
 			downPos.x = newPos.x;
@@ -124,13 +124,13 @@ public class PaintView extends View {
 			
 			if (bgmMode) bgmPlayer.start();
 			break;
-		case MotionEvent.ACTION_MOVE: // ƒ^ƒbƒ`‚µ‚Ä‚©‚ç—£‚·‚Ü‚Å‚ÌˆÚ“®‚µ‚ÄŠÔ
+		case MotionEvent.ACTION_MOVE: // ï¿½^ï¿½bï¿½`ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ç—£ï¿½ï¿½ï¿½Ü‚Å‚ÌˆÚ“ï¿½ï¿½ï¿½ï¿½ÄŠï¿½
 			undoFlag = true;
 			switch (elementMode) {
 			case MODE_LINE:
-				// ˆÚ“®‹——£‚ª‹–—e’lˆÈ‰º‚Ìê‡‚Í•`‰æ‚µ‚È‚¢
+				// ï¿½Ú“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½eï¿½lï¿½È‰ï¿½ï¿½Ìê‡ï¿½Í•`ï¿½æ‚µï¿½È‚ï¿½
 				if (Math.abs(newPos.x - oldPos.x) >= TOLERANCE || Math.abs(newPos.y - oldPos.y) >= TOLERANCE) {
-					// ŠŠ‚ç‚©‚Èü‚ğ•`‰æ‚·‚é
+					// ï¿½ï¿½ï¿½ç‚©ï¿½Èï¿½ï¿½`ï¿½æ‚·ï¿½ï¿½
 					element.path.quadTo(oldPos.x, oldPos.y, (oldPos.x + newPos.x)/2, (oldPos.y + newPos.y)/2);
 				}
 				break;
@@ -140,12 +140,12 @@ public class PaintView extends View {
 			}
 			invalidate();			
 			break;
-		case MotionEvent.ACTION_UP: // ƒ^ƒbƒ`‚µ‚Ä—£‚µ‚½
+		case MotionEvent.ACTION_UP: // ï¿½^ï¿½bï¿½`ï¿½ï¿½ï¿½Ä—ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			switch (elementMode) {
 			case MODE_LINE:	element.path.lineTo(newPos.x, newPos.y);	break;
 			default:		elementMode = MODE_LINE;					break;
 			}
-			// UNDO‚ÌŒã‚ÉV‚µ‚¢‘‚«‚İ‚ª‚³‚ê‚½Û‚ÌAŒÃ‚¢—š—ğƒIƒuƒWƒFƒNƒg‚Ìíœ‚ğs‚¤
+			// UNDOï¿½ÌŒï¿½ÉVï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İ‚ï¿½ï¿½ï¿½ï¿½ê‚½ï¿½Û‚ÌAï¿½Ã‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½Ìíœï¿½ï¿½ï¿½sï¿½ï¿½
 			while (undo < 0) {
 				elements.remove(elements.size() - 1);
 				undo++;
@@ -164,7 +164,7 @@ public class PaintView extends View {
 		oldPos.y = newPos.y;
 		return true;
 	}
-	// 1‘€ì–ß‚é
+	// 1ï¿½ï¿½ï¿½ï¿½ß‚ï¿½
 	public void historyBack() {
 		undo--;
 		undoFlag = false;
@@ -172,7 +172,7 @@ public class PaintView extends View {
 		if (elements.size() + undo == 0) setButtonEnabled(ivUndo, false);
 		invalidate();
 	}
-	// 1‘€ìi‚Ş
+	// 1ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½
 	public void historyForward() {
 		undo++;
 		undoFlag = false;
@@ -180,7 +180,7 @@ public class PaintView extends View {
 		if (undo == 0) setButtonEnabled(ivRedo, false);
 		invalidate();
 	}
-	// ƒNƒŠƒA
+	// ï¿½Nï¿½ï¿½ï¿½A
 	public void clearPathList() {
 		undo = 0;
 		elements.clear();
@@ -190,23 +190,23 @@ public class PaintView extends View {
 		setButtonEnabled(ivRedo, false);
 		eraserMode = false;
 	}
-	// Undo, Redoƒ{ƒ^ƒ“‚Ìenable/disableˆ—
+	// Undo, Redoï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½enable/disableï¿½ï¿½ï¿½ï¿½
 	private void setButtonEnabled(ImageView v, boolean enable){
 		v.setEnabled(enable);
 		v.setAlpha(enable? 255 : 128);
 	}
-	// ƒXƒ^ƒ“ƒv}Œ`‚ğ•`‰æ‚·‚éB (m:mode, e:element, o:old position, n:new position)
+	// ï¿½Xï¿½^ï¿½ï¿½ï¿½vï¿½}ï¿½`ï¿½ï¿½`ï¿½æ‚·ï¿½ï¿½B (m:mode, e:element, o:old position, n:new position)
 	private void drawStamp(int m, Element e, PointF o, PointF n) {
 		float sq = (float)Math.sqrt((n.x - o.x)*(n.x - o.x)+(n.y - o.y)*(n.y - o.y));
 		switch (m) {
-		case MODE_STAMP_TRIANGLE:	e.path.reset(); // Š¸‚Äbreak‚µ‚È‚¢B
+		case MODE_STAMP_TRIANGLE:	e.path.reset(); // ï¿½ï¿½ï¿½ï¿½breakï¿½ï¿½ï¿½È‚ï¿½ï¿½B
 		case MODE_STAMP_TRIANGLE_DURATION:
 			e.path.moveTo(o.x, o.y-sq);
 			e.path.lineTo(o.x-sq, o.y+sq);
 			e.path.lineTo(o.x+sq, o.y+sq);
 			e.path.lineTo(o.x, o.y-sq);		
 			break;
-		case MODE_STAMP_RECTANGLE:	e.path.reset(); // Š¸‚Äbreak‚µ‚È‚¢B
+		case MODE_STAMP_RECTANGLE:	e.path.reset(); // ï¿½ï¿½ï¿½ï¿½breakï¿½ï¿½ï¿½È‚ï¿½ï¿½B
 		case MODE_STAMP_RECTANGLE_DURATION:
 			e.path.moveTo(o.x-sq, o.y-sq);
 			e.path.lineTo(o.x+sq, o.y-sq);
@@ -214,11 +214,11 @@ public class PaintView extends View {
 			e.path.lineTo(o.x-sq, o.y+sq);
 			e.path.lineTo(o.x-sq, o.y-sq);
 			break;
-		case MODE_STAMP_CIRCLE:		e.path.reset(); // Š¸‚Äbreak‚µ‚È‚¢B
+		case MODE_STAMP_CIRCLE:		e.path.reset(); // ï¿½ï¿½ï¿½ï¿½breakï¿½ï¿½ï¿½È‚ï¿½ï¿½B
 		case MODE_STAMP_CIRCLE_DURATION:
 			e.path.addCircle(o.x, o.y, sq, Direction.CW);	
 			break;
-		case MODE_STAMP_STAR:		e.path.reset(); // Š¸‚Äbreak‚µ‚È‚¢B
+		case MODE_STAMP_STAR:		e.path.reset(); // ï¿½ï¿½ï¿½ï¿½breakï¿½ï¿½ï¿½È‚ï¿½ï¿½B
 		case MODE_STAMP_STAR_DURATION:
 			float theta = (float)(Math.PI * 72 / 180);
 			float dx1 = (float)(Math.sin(theta));
@@ -237,14 +237,14 @@ public class PaintView extends View {
 			break;
 		}
 	}
-	// ‰æ‘œƒtƒ@ƒCƒ‹‚ğ•Û‘¶
+	// ï¿½æ‘œï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½Û‘ï¿½
 	public boolean isSaveToFile(PaintApplicationActivity paint) {
-		// ƒLƒƒƒbƒVƒ…‚©‚çƒLƒƒƒvƒ`ƒƒ‚ğì¬A‚»‚Ì‚½‚ßƒLƒƒƒbƒVƒ…‚ğON
+		// ï¿½Lï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Lï¿½ï¿½ï¿½vï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½ì¬ï¿½Aï¿½ï¿½ï¿½Ì‚ï¿½ï¿½ßƒLï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½ï¿½ON
 		setDrawingCacheEnabled(true);
 		Bitmap bitmap = Bitmap.createBitmap(getDrawingCache());
-		// ƒLƒƒƒbƒVƒ…‚Í‚à‚¤‚Æ‚ç‚È‚¢‚Ì‚ÅƒLƒƒƒbƒVƒ…‚ğOFF
+		// ï¿½Lï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½Í‚ï¿½ï¿½ï¿½ï¿½Æ‚ï¿½È‚ï¿½ï¿½Ì‚ÅƒLï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½ï¿½OFF
 		setDrawingCacheEnabled(false);
-		// •Û‘¶æ‚ÌŒˆ’è(‘¶İ‚µ‚È‚¢ê‡‚Íì¬)
+		// ï¿½Û‘ï¿½ï¿½ï¿½ÌŒï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½İ‚ï¿½ï¿½È‚ï¿½ï¿½ê‡ï¿½Íì¬)
 		File file;
 		String path = Environment.getExternalStorageDirectory() + "/PaintApplication/";
 		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
@@ -254,12 +254,12 @@ public class PaintView extends View {
 			file = Environment.getDataDirectory();
 		}
 		Date d = new Date();
-		// ˆêˆÓ‚Æ‚È‚éƒtƒ@ƒCƒ‹–¼‚ğæ“¾iƒ^ƒCƒ€ƒXƒ^ƒ“ƒvj
+		// ï¿½ï¿½Ó‚Æ‚È‚ï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ“¾ï¿½iï¿½^ï¿½Cï¿½ï¿½ï¿½Xï¿½^ï¿½ï¿½ï¿½vï¿½j
 		String fileName = String.format("%4d%02d%02d-%02d%02d%02d",
 				(1900 + d.getYear()), d.getMonth() + 1, d.getDate(),
 				d.getHours(), d.getMinutes(), d.getSeconds());
 		file = new File(path + fileName + ".png");
-		try { // ‰æ‘œ‚ğƒtƒ@ƒCƒ‹‚É‘‚«‚Ş
+		try { // ï¿½æ‘œï¿½ï¿½ï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½Éï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			FileOutputStream out = new FileOutputStream(file);
 			bitmap.compress(CompressFormat.PNG, 100, out);
 			out.flush();
@@ -270,7 +270,7 @@ public class PaintView extends View {
 			return false;
 		}
 	}
-	// ƒƒfƒBƒAƒXƒLƒƒƒi‚ÉƒXƒLƒƒƒ“‚³‚¹‚é
+	// ï¿½ï¿½ï¿½fï¿½Bï¿½Aï¿½Xï¿½Lï¿½ï¿½ï¿½iï¿½ÉƒXï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void mediaScanExecute(PaintApplicationActivity paint, final String file) {
 		mc = new MediaScannerConnection(paint,
 			new MediaScannerConnection.MediaScannerConnectionClient() {

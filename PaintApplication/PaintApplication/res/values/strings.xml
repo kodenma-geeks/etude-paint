@@ -6,7 +6,7 @@
     <string name="menu_save">保存</string>
     <string name="menu_color">カラー</string>
     <string name="menu_setting">詳細設定</string>
-    <string name="menu_config">設定</string>
+    <string name="menu_config">背景色・図形モード・サウンド設定</string>
     <string name="menu_futosa">太さ</string>
     <string name="line_thick">線の太さ=</string> <!-- 太さの追加 -->
     <string name="antialias_on">アンチエイリアスあり</string> <!-- アンチエイリアスの追加 -->
@@ -43,6 +43,7 @@
     <item type="id" name="imageView_eraser">消しゴムモードのトグル</item>
     <item type="id" name="imageView_undo">アンドゥ操作</item>
     <item type="id" name="imageView_redo">リドゥ操作</item>
+    
     <integer-array name="subMenuButtons">
         <item>@id/imageView_brush</item>
         <item>@id/imageView_color</item>

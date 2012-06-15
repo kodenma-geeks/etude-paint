@@ -24,8 +24,8 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 
 	private final int WIDTH_MARGIN = 50;
 	private final int HEIGHT = 200;
-	private final int THICK_MAX = 50; 		// ‘¾‚³‚ÌÅ‘å’l
-	private final int THICK_MIN = 1; 		// ‘¾‚³‚ÌÅ‘å’l
+	private final int THICK_MAX = 50; 		// ï¿½ï¿½ï¿½ï¿½ï¿½ÌÅ‘ï¿½l
+	private final int THICK_MIN = 1; 		// ï¿½ï¿½ï¿½ï¿½ï¿½ÌÅ‘ï¿½l
 
 	private TextView seekText;   
 	private Button okBtn, canclBtn;
@@ -54,16 +54,16 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 		lv.setBackgroundColor(bgColor);
 
 
-		// limitİ’è‚Ì‚½‚ß‚ÌƒV[ƒNƒo[
+		// limitï¿½İ’ï¿½Ì‚ï¿½ï¿½ß‚ÌƒVï¿½[ï¿½Nï¿½oï¿½[
 		SeekBar seekBar = new SeekBar(this);   
 	    seekBar.setMax(THICK_MAX - THICK_MIN);
-	    seekBar.setProgress(thick + THICK_MIN);	// ƒV[ƒNƒo[‚Ì‰Šú•\¦
+	    seekBar.setProgress(thick + THICK_MIN);	// ï¿½Vï¿½[ï¿½Nï¿½oï¿½[ï¿½Ìï¿½ï¿½ï¿½\ï¿½ï¿½
 
 		seekText = new TextView(this);   
-		seekText.setText(getResources().getString(R.string.line_thick) + thick);		// ƒV[ƒNƒo[‚Ì‰Šú’l•\¦
+		seekText.setText(getResources().getString(R.string.line_thick) + thick);		// ï¿½Vï¿½[ï¿½Nï¿½oï¿½[ï¿½Ìï¿½ï¿½ï¿½lï¿½\ï¿½ï¿½
 
 		okBtn = new Button(this);
-		okBtn.setText(R.string.menu_config);
+		okBtn.setText(R.string.strconf_apply);
 		okBtn.setOnClickListener(new SampleClickListener());
 
 		canclBtn = new Button(this);
@@ -80,9 +80,9 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 		rg.addView(rbf);
 
 		if(antiAlias){
-			rbt.setChecked(true);	//@ƒAƒ“ƒ`ƒGƒCƒŠƒAƒX‚ ‚èƒ{ƒ^ƒ“‚ğƒIƒ“
+			rbt.setChecked(true);	//ï¿½@ï¿½Aï¿½ï¿½ï¿½`ï¿½Gï¿½Cï¿½ï¿½ï¿½Aï¿½Xï¿½ï¿½ï¿½ï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½
 		} else{
-			rbf.setChecked(true);	//@ƒAƒ“ƒ`ƒGƒCƒŠƒAƒX‚È‚µƒ{ƒ^ƒ“‚ğƒIƒ“
+			rbf.setChecked(true);	//ï¿½@ï¿½Aï¿½ï¿½ï¿½`ï¿½Gï¿½Cï¿½ï¿½ï¿½Aï¿½Xï¿½È‚ï¿½ï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½
 		}
 
 		ll.addView(seekBar);
@@ -98,7 +98,7 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 		rbf.setOnClickListener(new SampleClickListener());
 	}
  
-	// ƒV[ƒNƒo[•\¦
+	// ï¿½Vï¿½[ï¿½Nï¿½oï¿½[ï¿½\ï¿½ï¿½
 	public void onProgressChanged(SeekBar seekBar, int index, boolean fromUser){   
 		if(fromUser){ 
 			index += THICK_MIN;
@@ -110,7 +110,7 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 	public void onStartTrackingTouch(SeekBar seek){}   
 	public void onStopTrackingTouch(SeekBar seekBar){}
 
-	// ƒ{ƒ^ƒ“‚Ìˆ—
+	// ï¿½{ï¿½^ï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½
 	class SampleClickListener implements OnClickListener {
 		public void onClick(View v) {
 			if (v == rbt) {
@@ -119,7 +119,7 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 				antiAlias = false;
 			} else if (v == okBtn) {
 				if (thick < THICK_MIN) thick = THICK_MIN;
-				it.putExtra("THICK", thick); // “¯‚¶ƒCƒ“ƒeƒ“ƒg‚Å‚È‚¯‚ê‚Î‚È‚ç‚È‚¢‚ÌH
+				it.putExtra("THICK", thick); // ï¿½ï¿½ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½eï¿½ï¿½ï¿½gï¿½Å‚È‚ï¿½ï¿½ï¿½Î‚È‚ï¿½È‚ï¿½ï¿½ÌH
 				it.putExtra("ANTIALIAS", antiAlias); 
 				setResult(RESULT_OK, it);      	 
 				finish();
@@ -131,17 +131,17 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 	}
 	class SampleLineView extends View {
 		SampleLineView(Context context) { super(context); }
-		// ƒfƒBƒXƒvƒŒƒC‚ÌƒCƒ“ƒXƒ^ƒ“ƒX¶¬
+		// ï¿½fï¿½Bï¿½Xï¿½vï¿½ï¿½ï¿½Cï¿½ÌƒCï¿½ï¿½ï¿½Xï¿½^ï¿½ï¿½ï¿½Xï¿½ï¿½ï¿½ï¿½
 		WindowManager wm = (WindowManager)getSystemService(WINDOW_SERVICE);
 		Display disp = wm.getDefaultDisplay();
 
 		public void onDraw(Canvas cv){
-			paint.setColor(color); // ü‚ÌF
-			paint.setAntiAlias(antiAlias); // ƒAƒ“ƒ`ƒGƒCƒŠƒAƒX‚Ì—L–³
-			paint.setStyle(Paint.Style.STROKE); // ü‚ÌƒXƒ^ƒCƒ‹iSTROKEF}Œ`‚Ì—ÖŠsü‚Ì‚İ•\¦AFILL:“h‚éj
-			paint.setStrokeCap(Paint.Cap.ROUND); // @ü‚Ìæ’[ƒXƒ^ƒCƒ‹iROUNDFŠÛ‚­‚·‚éj
-			paint.setStrokeJoin(Paint.Join.ROUND); // ü‚Æü‚ÌÚ‘±“_‚ÌƒXƒ^ƒCƒ‹iROUNDFŠÛ‚­‚·‚éj
-			paint.setStrokeWidth(thick); // ü‚Ì‘¾‚³
+			paint.setColor(color); // ï¿½ï¿½ÌF
+			paint.setAntiAlias(antiAlias); // ï¿½Aï¿½ï¿½ï¿½`ï¿½Gï¿½Cï¿½ï¿½ï¿½Aï¿½Xï¿½Ì—Lï¿½ï¿½
+			paint.setStyle(Paint.Style.STROKE); // ï¿½ï¿½ÌƒXï¿½^ï¿½Cï¿½ï¿½ï¿½iSTROKEï¿½Fï¿½}ï¿½`ï¿½Ì—ÖŠsï¿½ï¿½Ì‚İ•\ï¿½ï¿½ï¿½AFILL:ï¿½hï¿½ï¿½j
+			paint.setStrokeCap(Paint.Cap.ROUND); // ï¿½@ï¿½ï¿½Ìï¿½[ï¿½Xï¿½^ï¿½Cï¿½ï¿½ï¿½iROUNDï¿½Fï¿½Û‚ï¿½ï¿½ï¿½ï¿½ï¿½j
+			paint.setStrokeJoin(Paint.Join.ROUND); // ï¿½ï¿½Æï¿½ÌÚ‘ï¿½ï¿½_ï¿½ÌƒXï¿½^ï¿½Cï¿½ï¿½ï¿½iROUNDï¿½Fï¿½Û‚ï¿½ï¿½ï¿½ï¿½ï¿½j
+			paint.setStrokeWidth(thick); // ï¿½ï¿½Ì‘ï¿½ï¿½ï¿½
 			cv.drawLine(WIDTH_MARGIN, HEIGHT, disp.getWidth()-WIDTH_MARGIN, HEIGHT, paint);
 			invalidate();
 	    }    

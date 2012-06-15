@@ -28,8 +28,12 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
         </activity>
-
-        <activity android:name=".PaintApplicationThick" />
+        <activity
+            android:name=".PaintApplicationThick"
+            android:configChanges="keyboardHidden|orientation"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+        </activity>
     </application>
 
 </manifest>

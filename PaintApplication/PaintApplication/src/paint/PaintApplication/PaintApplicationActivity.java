@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -19,12 +20,15 @@ public class PaintApplicationActivity extends Activity {
 	private final int INTENT_FOR_CONFIG_VIEW = 1;
 	private final int INTENT_FOR_PAINT_APPLICATION_THICK = 2;
 	private PaintView paintView;
+	/*private ImageView ivEraser;*/
 
 	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);// ƒƒCƒ“‚ÉƒJƒXƒ^ƒ€ƒrƒ…[‚ğ’Ç‰Á
+		setContentView(R.layout.main);// ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½ÉƒJï¿½Xï¿½^ï¿½ï¿½ï¿½rï¿½ï¿½ï¿½[ï¿½ï¿½Ç‰ï¿½
 		paintView = (PaintView)findViewById(R.id.paintView);
-		new SubMenuClickListener(); // ƒTƒuƒƒjƒ…[ƒ{ƒ^ƒ“‚ÉŠÖ‚µ‚Ä‚Í‘S‚Ä‚±‚ÌƒŠƒXƒi[‚É”C‚¹‚éBanonymous‚ÈƒIƒuƒWƒFƒNƒg‚Å‚æ‚¢B
+		new SubMenuClickListener(); // ï¿½Tï¿½uï¿½ï¿½ï¿½jï¿½ï¿½ï¿½[ï¿½{ï¿½^ï¿½ï¿½ï¿½ÉŠÖ‚ï¿½ï¿½Ä‚Í‘Sï¿½Ä‚ï¿½ï¿½Ìƒï¿½ï¿½Xï¿½iï¿½[ï¿½É”Cï¿½ï¿½ï¿½ï¿½Banonymousï¿½ÈƒIï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½Å‚æ‚¢ï¿½B
+		
+		/*ivEraser = (ImageView) findViewById(R.id.imageView_eraser);*/
 	}
 	@Override public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -33,11 +37,11 @@ public class PaintApplicationActivity extends Activity {
 	}
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.configId: // İ’èƒ{ƒ^ƒ“‰Ÿ‰º
+		case R.id.configId: // ï¿½İ’ï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			Intent it = new Intent(getApplicationContext(), ConfigView.class);
 			startActivityForResult(it, INTENT_FOR_CONFIG_VIEW);
 			break;
-		case R.id.clearId: // ƒNƒŠƒAƒ{ƒ^ƒ“‰Ÿ‰º (‚Í‚¢/‚¢‚¢‚¦‚Ìƒ_ƒCƒAƒƒO•\¦)
+		case R.id.clearId: // ï¿½Nï¿½ï¿½ï¿½Aï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½Í‚ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìƒ_ï¿½Cï¿½Aï¿½ï¿½ï¿½Oï¿½\ï¿½ï¿½)
 			AlertDialog.Builder adBuilder = new AlertDialog.Builder(this);
 			adBuilder.setTitle(R.string.clear);
 			adBuilder.setMessage(R.string.all_clear_message);
@@ -54,7 +58,7 @@ public class PaintApplicationActivity extends Activity {
 				});
 			adBuilder.show();
 			break;
-		case R.id.saveId: // •Û‘¶ƒ{ƒ^ƒ“‰Ÿ‰º
+		case R.id.saveId: // ï¿½Û‘ï¿½ï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			new AlertDialog.Builder(this)
 				.setTitle(R.string.save)
 				.setMessage(paintView.isSaveToFile(this) ? R.string.save_success : R.string.save_fail)
@@ -65,7 +69,7 @@ public class PaintApplicationActivity extends Activity {
 	}
 	public void onActivityResult(int reqcode, int result, Intent it) {
 		switch(reqcode) {
-		case INTENT_FOR_PAINT_APPLICATION_THICK: // ‘¾‚³İ’è‰æ–Ê‚©‚ç‚Ì–ß‚èˆ—
+		case INTENT_FOR_PAINT_APPLICATION_THICK: // ï¿½ï¿½ï¿½ï¿½ï¿½İ’ï¿½ï¿½Ê‚ï¿½ï¿½ï¿½Ì–ß‚èˆï¿½ï¿½
 			if (result == RESULT_OK) {
 				paintView.setThickness(it.getIntExtra("THICK", 2));
 				paintView.setAntiAlias(it.getBooleanExtra("ANTIALIAS", true));
@@ -82,7 +86,7 @@ public class PaintApplicationActivity extends Activity {
 			break;
 		}
 	}
-	// ƒTƒuƒƒjƒ…[ƒ{ƒ^ƒ“‚ÌƒŠƒXƒi[
+	// ï¿½Tï¿½uï¿½ï¿½ï¿½jï¿½ï¿½ï¿½[ï¿½{ï¿½^ï¿½ï¿½ï¿½Ìƒï¿½ï¿½Xï¿½iï¿½[
 	private class SubMenuClickListener implements View.OnClickListener {
 		private SubMenuClickListener() {
 			TypedArray tArray = getResources().obtainTypedArray(R.array.subMenuButtons);
@@ -112,7 +116,25 @@ public class PaintApplicationActivity extends Activity {
 				dlg.show();
 				Toast.makeText(getApplicationContext(), Integer.toHexString(paintView.getBrushColor()),Toast.LENGTH_SHORT).show();
 				break;
-			case R.id.imageView_eraser:	paintView.toggleEraserMode();	break;
+			case R.id.imageView_eraser:	
+				paintView.toggleEraserMode();
+				
+				ImageView roll = (ImageView)v;
+				RotateAnimation  anim = new RotateAnimation(0,360,roll.getWidth()/2,roll.getHeight()/2);
+				anim.setDuration(1000);
+				roll.startAnimation(anim);
+				
+				if (paintView.eraserMode) {
+					paintView.ivEraser.setImageResource(R.drawable.eraser);
+				Toast.makeText(getApplicationContext(), "æ¶ˆã—ã‚´ãƒ ãƒ¢ãƒ¼ãƒ‰", Toast.LENGTH_LONG).show();
+
+				} else {
+					paintView.ivEraser.setImageResource(R.drawable.pen);
+				Toast.makeText(getApplicationContext(), "æç”»ãƒ¢ãƒ¼ãƒ‰", Toast.LENGTH_LONG).show();
+				}
+				break;
+
+	
 			case R.id.imageView_undo:	paintView.historyBack();		break;
 			case R.id.imageView_redo:	paintView.historyForward();		break;
 			}
