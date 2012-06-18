@@ -2,11 +2,11 @@
 <resources>
 
     <string-array name="color_list_entries">
-        <item>黄</item>
-        <item>青</item>
-        <item>緑</item>
-        <item>白</item>
-        <item>黒</item>
+        <item>Yellow</item>
+        <item>Blue</item>
+        <item>Green</item>
+        <item>White</item>
+        <item>Black</item>
     </string-array>
     <string-array name="color_list_entryvalues">
         <item>1</item>
@@ -16,15 +16,15 @@
         <item>5</item>
     </string-array>
     <string-array name="stamp_list_entries">
-        <item>なし</item>
-        <item>△</item>
-        <item>□</item>
-        <item>○</item>
-        <item>☆</item>
-        <item>△(Duration)</item>
-        <item>□(Duration)</item>
-        <item>○(Duration)</item>
-        <item>☆(Duration)</item>
+        <item>None</item>
+        <item>Triangle</item>
+        <item>Square</item>
+        <item>Circle</item>
+        <item>Star</item>
+        <item>Triangle(Duration)</item>
+        <item>Square(Duration)</item>
+        <item>Circle(Duration)</item>
+        <item>Star(Duration)</item>
     </string-array>
     <string-array name="stamp_list_entryvalues">
         <item>-1</item>

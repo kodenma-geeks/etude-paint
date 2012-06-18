@@ -124,14 +124,16 @@ public class PaintApplicationActivity extends Activity {
 				anim.setDuration(1000);
 				roll.startAnimation(anim);
 				
+				int messageID;
 				if (paintView.eraserMode) {
 					paintView.ivEraser.setImageResource(R.drawable.eraser);
-				Toast.makeText(getApplicationContext(), "消しゴムモード", Toast.LENGTH_LONG).show();
-
+					messageID = R.string.toast_pen;
 				} else {
 					paintView.ivEraser.setImageResource(R.drawable.pen);
-				Toast.makeText(getApplicationContext(), "描画モード", Toast.LENGTH_LONG).show();
+					messageID = R.string.toast_eraser;
 				}
+				String message = getResources().getString(messageID);
+				Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
 				break;
 
 	
