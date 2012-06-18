@@ -24,8 +24,8 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 
 	private final int WIDTH_MARGIN = 50;
 	private final int HEIGHT = 200;
-	private final int THICK_MAX = 50; 		// �����̍ő�l
-	private final int THICK_MIN = 1; 		// �����̍ő�l
+	private final int THICK_MAX = 50; 		// 太さの最大値
+	private final int THICK_MIN = 1; 		// 太さの最小値
 
 	private TextView seekText;   
 	private Button okBtn, canclBtn;
@@ -54,13 +54,13 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 		lv.setBackgroundColor(bgColor);
 
 
-		// limit�ݒ�̂��߂̃V�[�N�o�[
+		// limit設定のためのシークバー
 		SeekBar seekBar = new SeekBar(this);   
 	    seekBar.setMax(THICK_MAX - THICK_MIN);
-	    seekBar.setProgress(thick + THICK_MIN);	// �V�[�N�o�[�̏���\��
+	    seekBar.setProgress(thick + THICK_MIN);	// シークバーの初期表示
 
 		seekText = new TextView(this);   
-		seekText.setText(getResources().getString(R.string.line_thick) + thick);		// �V�[�N�o�[�̏���l�\��
+		seekText.setText(getResources().getString(R.string.line_thick) + thick);	// シークバーの初期値表示
 
 		okBtn = new Button(this);
 		okBtn.setText(R.string.strconf_apply);
@@ -80,9 +80,9 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 		rg.addView(rbf);
 
 		if(antiAlias){
-			rbt.setChecked(true);	//�@�A���`�G�C���A�X����{�^�����I��
+			rbt.setChecked(true);	///　アンチエイリアスありボタンをオン
 		} else{
-			rbf.setChecked(true);	//�@�A���`�G�C���A�X�Ȃ��{�^�����I��
+			rbf.setChecked(true);	///　アンチエイリアスなしボタンをオン
 		}
 
 		ll.addView(seekBar);
@@ -98,7 +98,7 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 		rbf.setOnClickListener(new SampleClickListener());
 	}
  
-	// �V�[�N�o�[�\��
+	// シークバー表示
 	public void onProgressChanged(SeekBar seekBar, int index, boolean fromUser){   
 		if(fromUser){ 
 			index += THICK_MIN;
@@ -110,7 +110,7 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 	public void onStartTrackingTouch(SeekBar seek){}   
 	public void onStopTrackingTouch(SeekBar seekBar){}
 
-	// �{�^���̏���
+	// ボタンの処理
 	class SampleClickListener implements OnClickListener {
 		public void onClick(View v) {
 			if (v == rbt) {
@@ -119,7 +119,7 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 				antiAlias = false;
 			} else if (v == okBtn) {
 				if (thick < THICK_MIN) thick = THICK_MIN;
-				it.putExtra("THICK", thick); // �����C���e���g�łȂ���΂Ȃ�Ȃ��́H
+				it.putExtra("THICK", thick);		// 同じインテントでなければならないの？
 				it.putExtra("ANTIALIAS", antiAlias); 
 				setResult(RESULT_OK, it);      	 
 				finish();
@@ -131,17 +131,17 @@ public class PaintApplicationThick extends Activity implements OnSeekBarChangeLi
 	}
 	class SampleLineView extends View {
 		SampleLineView(Context context) { super(context); }
-		// �f�B�X�v���C�̃C���X�^���X����
+		// ディスプレイのインスタンス生成
 		WindowManager wm = (WindowManager)getSystemService(WINDOW_SERVICE);
 		Display disp = wm.getDefaultDisplay();
 
 		public void onDraw(Canvas cv){
-			paint.setColor(color); // ��̐F
-			paint.setAntiAlias(antiAlias); // �A���`�G�C���A�X�̗L��
-			paint.setStyle(Paint.Style.STROKE); // ��̃X�^�C���iSTROKE�F�}�`�̗֊s��̂ݕ\���AFILL:�h��j
-			paint.setStrokeCap(Paint.Cap.ROUND); // �@��̐�[�X�^�C���iROUND�F�ۂ�����j
-			paint.setStrokeJoin(Paint.Join.ROUND); // ��Ɛ�̐ڑ��_�̃X�^�C���iROUND�F�ۂ�����j
-			paint.setStrokeWidth(thick); // ��̑���
+			paint.setColor(color);					// 線の色
+			paint.setAntiAlias(antiAlias);			// アンチエイリアスの有無
+			paint.setStyle(Paint.Style.STROKE); 	// 線のスタイル（STROKE：図形の輪郭線のみ表示、FILL:塗る）
+			paint.setStrokeCap(Paint.Cap.ROUND);	// 線の先端スタイル（ROUND：丸くする）
+			paint.setStrokeJoin(Paint.Join.ROUND);	// 線と線の接続点のスタイル（ROUND：丸くする）
+			paint.setStrokeWidth(thick);			// 線の太さ
 			cv.drawLine(WIDTH_MARGIN, HEIGHT, disp.getWidth()-WIDTH_MARGIN, HEIGHT, paint);
 			invalidate();
 	    }    

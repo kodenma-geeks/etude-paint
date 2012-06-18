@@ -24,7 +24,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 public class PaintView extends View {
-	// �`��G�������g�̌`��
+	// 描画エレメントの形状
 	private final int MODE_LINE = -1;
 	private final int MODE_STAMP_TRIANGLE = 0;
 	private final int MODE_STAMP_RECTANGLE = 1;
@@ -34,47 +34,47 @@ public class PaintView extends View {
 	private final int MODE_STAMP_RECTANGLE_DURATION = 5;
 	private final int MODE_STAMP_CIRCLE_DURATION = 6;
 	private final int MODE_STAMP_STAR_DURATION = 7;
-	// Move�C�x���g��������̋��e�l
+	// Moveイベント発生判定の許容値
 	private final int TOLERANCE = 3;
 	
-	// �`��G�������g
+	// 描画エレメント
 	private class Element {
-		private Path path = new Path(); 						// path����ێ�
-		private Paint paint = new Paint(); 						// paint����ێ�
-		public boolean eraser =  eraserMode;					// �����S�����ǂ���
+		private Path path = new Path(); 						// path情報を保持
+		private Paint paint = new Paint(); 						// paint情報を保持
+		public boolean eraser =  eraserMode;					// 消しゴムかどうか
 		private Element(){
-			paint.setColor(eraserMode? bgColor : brushColor);	// �`��G�������g�̐F
-			paint.setAntiAlias(antiAlias);						// �A���`�G�C���A�X�̗L��
-			paint.setStyle(Paint.Style.STROKE);					// ��̃X�^�C���iSTROKE�F�}�`�̗֊s��̂ݕ\���AFILL:�h��j
-			paint.setStrokeWidth(thickness);					// ��̑���
-			paint.setStrokeCap(Paint.Cap.ROUND);				// �@��̐�[�X�^�C���iROUND�F�ۂ�����j
-			paint.setStrokeJoin(Paint.Join.ROUND);				// ��Ɛ�̐ڑ��_�̃X�^�C���iROUND�F�ۂ�����j
+			paint.setColor(eraserMode? bgColor : brushColor);	// 描画エレメントの色
+			paint.setAntiAlias(antiAlias);						// アンチエイリアスの有無
+			paint.setStyle(Paint.Style.STROKE);					// 線のスタイル（STROKE：図形の輪郭線のみ表示、FILL:塗る）
+			paint.setStrokeWidth(thickness);					// 線の太さ
+			paint.setStrokeCap(Paint.Cap.ROUND);				// 線の先端スタイル（ROUND：丸くする）
+			paint.setStrokeJoin(Paint.Join.ROUND);				// 線と線の接続点のスタイル（ROUND：丸くする）
 		}
 	}
-	private Element element = null;			// �`��G�������g
+	private Element element = null;			// 描画エレメント
 	private ArrayList<Element> elements = new ArrayList<Element>();
-	// �C�x���g�ʒu
-	private PointF oldPos  = new PointF();	// �O��̃C�x���g�ʒu
-	private PointF newPos  = new PointF();	// ����̃C�x���g�ʒu
-	private PointF downPos = new PointF();	// ACTION_DOWN�̃C�x���g�ʒu
-	// �e�탂�[�h
-	private int elementMode = MODE_LINE;	// �`��G�������g�̌`��
-	boolean eraserMode = false; 	// �����S�����[�h
-	private boolean bgmMode = true;			// ��ʉ��o�̓��[�h
-	// �e�푮��
-	private int bgColor = Color.BLACK;		// �w�i�F
-	private int brushColor = Color.WHITE;	// �u���V�̐F
-	private int thickness = 2;				// �u���V�̑���
-	private boolean antiAlias = true;		// �u���V�̃A���`�G�C���A�X
-	// Undo, Redo, �֘A
-	private int undo = 0;					// �A���h�D�����̂��߂̃J�E���g�ϐ�
-	private boolean undoFlag = true;		// �ĕ`��o�O�̃e�X�g�t���O
-	private ImageView ivUndo;				// Undo�{�^��
-	private ImageView ivRedo;				// Rndo�{�^��
-	ImageView ivEraser;				// Eraser�{�^��
-	// ���̑�
-	private BgmPlayer bgmPlayer;			// ��ʉ��o�̓I�u�W�F�N�g
-	private MediaScannerConnection mc;		// ���f�B�A�X�L���i�ւ̃R�l�N�^
+	// イベント位置
+	private PointF oldPos  = new PointF();	// 前回のイベント位置
+	private PointF newPos  = new PointF();	// 今回のイベント位置
+	private PointF downPos = new PointF();	// ACTION_DOWNのイベント位置
+	// 各種モード
+	private int elementMode = MODE_LINE;	// 描画エレメントの形状
+	boolean eraserMode = false; 			// 消しゴムモード
+	private boolean bgmMode = true;			// 効果音出力モード
+	// 各種属性
+	private int bgColor = Color.BLACK;		// 背景色
+	private int brushColor = Color.WHITE;	// ブラシの色
+	private int thickness = 2;				// ブラシの太さ
+	private boolean antiAlias = true;		// ブラシのアンチエイリアス
+	// Undo, Redo, 関連
+	private int undo = 0;					// アンドゥ処理のためのカウント変数
+	private boolean undoFlag = true;		// 再描画バグのテストフラグ
+	private ImageView ivUndo;				// Undoボタン
+	private ImageView ivRedo;				// Rndoボタン
+	ImageView ivEraser;						// Eraserボタン
+	// その他
+	private BgmPlayer bgmPlayer;			// 効果音出力オブジェクト
+	private MediaScannerConnection mc;		// メディアスキャナへのコネクタ
 
 	public PaintView(Context context) { this(context, null); }
 	public PaintView(Context context, AttributeSet attrs) {
@@ -93,7 +93,7 @@ public class PaintView extends View {
 	int getThickness()				{ return thickness; }
 	boolean isAntiAlias()			{ return antiAlias; }
 	int getBgColor()				{ return bgColor; }
-	// �r���[�̃��C�A�E�g�m�莞
+	// ビューのレイアウト確定時
 	@Override public void onLayout(boolean changed, int left, int top, int right, int bottom) {
 		Activity parent = (Activity)getContext();
 		ivUndo = (ImageView)parent.findViewById(R.id.imageView_undo);
@@ -103,7 +103,7 @@ public class PaintView extends View {
 		setButtonEnabled(ivRedo, false);
 	}
 	@Override public void onDraw(Canvas canvas) {
-		if (element != null) { // �J�����g�̕`��G�������g�������Ƃ��͕`�悵�Ȃ�
+		if (element != null) { // カレントの描画エレメントが無いときは描画しない
 			for (int i=0; i<elements.size() + undo; i++) {
 				Element e = elements.get(i);
 				if (e.eraser) e.paint.setColor(bgColor);
@@ -116,7 +116,7 @@ public class PaintView extends View {
 		newPos.x = e.getX();
 		newPos.y = e.getY();
 		switch (e.getAction()) {
-		case MotionEvent.ACTION_DOWN: // �^�b�`���ĉ�ʂ���������
+		case MotionEvent.ACTION_DOWN:
 			element = new Element();
 			element.path.moveTo(newPos.x, newPos.y);
 			downPos.x = newPos.x;
@@ -124,13 +124,13 @@ public class PaintView extends View {
 			
 			if (bgmMode) bgmPlayer.start();
 			break;
-		case MotionEvent.ACTION_MOVE: // �^�b�`���Ă��痣���܂ł̈ړ����Ċ�
+		case MotionEvent.ACTION_MOVE:
 			undoFlag = true;
 			switch (elementMode) {
 			case MODE_LINE:
-				// �ړ����������e�l�ȉ��̏ꍇ�͕`�悵�Ȃ�
+				// 移動距離が許容値以下の場合は描画しない
 				if (Math.abs(newPos.x - oldPos.x) >= TOLERANCE || Math.abs(newPos.y - oldPos.y) >= TOLERANCE) {
-					// ���炩�Ȑ��`�悷��
+					// 滑らかな線を描画する
 					element.path.quadTo(oldPos.x, oldPos.y, (oldPos.x + newPos.x)/2, (oldPos.y + newPos.y)/2);
 				}
 				break;
@@ -140,12 +140,12 @@ public class PaintView extends View {
 			}
 			invalidate();			
 			break;
-		case MotionEvent.ACTION_UP: // �^�b�`���ė�������
+		case MotionEvent.ACTION_UP:
 			switch (elementMode) {
 			case MODE_LINE:	element.path.lineTo(newPos.x, newPos.y);	break;
 			default:		elementMode = MODE_LINE;					break;
 			}
-			// UNDO�̌�ɐV�����������݂����ꂽ�ۂ́A�Â������I�u�W�F�N�g�̍폜���s��
+			// UNDOの後に新しい書き込みがされた際の、古い履歴オブジェクトの削除を行う
 			while (undo < 0) {
 				elements.remove(elements.size() - 1);
 				undo++;
@@ -164,7 +164,7 @@ public class PaintView extends View {
 		oldPos.y = newPos.y;
 		return true;
 	}
-	// 1����߂�
+	// 1操作戻る
 	public void historyBack() {
 		undo--;
 		undoFlag = false;
@@ -172,7 +172,7 @@ public class PaintView extends View {
 		if (elements.size() + undo == 0) setButtonEnabled(ivUndo, false);
 		invalidate();
 	}
-	// 1����i��
+	// 1操作進む
 	public void historyForward() {
 		undo++;
 		undoFlag = false;
@@ -180,7 +180,7 @@ public class PaintView extends View {
 		if (undo == 0) setButtonEnabled(ivRedo, false);
 		invalidate();
 	}
-	// �N���A
+	// クリア
 	public void clearPathList() {
 		undo = 0;
 		elements.clear();
@@ -190,23 +190,23 @@ public class PaintView extends View {
 		setButtonEnabled(ivRedo, false);
 		eraserMode = false;
 	}
-	// Undo, Redo�{�^����enable/disable����
+	// Undo, Redoボタンのenable/disable処理
 	private void setButtonEnabled(ImageView v, boolean enable){
 		v.setEnabled(enable);
 		v.setAlpha(enable? 255 : 128);
 	}
-	// �X�^���v�}�`��`�悷��B (m:mode, e:element, o:old position, n:new position)
+	// スタンプ図形を描画する。 (m:mode, e:element, o:old position, n:new position)
 	private void drawStamp(int m, Element e, PointF o, PointF n) {
 		float sq = (float)Math.sqrt((n.x - o.x)*(n.x - o.x)+(n.y - o.y)*(n.y - o.y));
 		switch (m) {
-		case MODE_STAMP_TRIANGLE:	e.path.reset(); // ����break���Ȃ��B
+		case MODE_STAMP_TRIANGLE:	e.path.reset(); // 敢てbreakしない。以下4か所も同様。
 		case MODE_STAMP_TRIANGLE_DURATION:
 			e.path.moveTo(o.x, o.y-sq);
 			e.path.lineTo(o.x-sq, o.y+sq);
 			e.path.lineTo(o.x+sq, o.y+sq);
 			e.path.lineTo(o.x, o.y-sq);		
 			break;
-		case MODE_STAMP_RECTANGLE:	e.path.reset(); // ����break���Ȃ��B
+		case MODE_STAMP_RECTANGLE:	e.path.reset();
 		case MODE_STAMP_RECTANGLE_DURATION:
 			e.path.moveTo(o.x-sq, o.y-sq);
 			e.path.lineTo(o.x+sq, o.y-sq);
@@ -214,11 +214,11 @@ public class PaintView extends View {
 			e.path.lineTo(o.x-sq, o.y+sq);
 			e.path.lineTo(o.x-sq, o.y-sq);
 			break;
-		case MODE_STAMP_CIRCLE:		e.path.reset(); // ����break���Ȃ��B
+		case MODE_STAMP_CIRCLE:		e.path.reset();
 		case MODE_STAMP_CIRCLE_DURATION:
 			e.path.addCircle(o.x, o.y, sq, Direction.CW);	
 			break;
-		case MODE_STAMP_STAR:		e.path.reset(); // ����break���Ȃ��B
+		case MODE_STAMP_STAR:		e.path.reset();
 		case MODE_STAMP_STAR_DURATION:
 			float theta = (float)(Math.PI * 72 / 180);
 			float dx1 = (float)(Math.sin(theta));
@@ -237,14 +237,14 @@ public class PaintView extends View {
 			break;
 		}
 	}
-	// �摜�t�@�C����ۑ�
+	// 画像ファイルを保存
 	public boolean isSaveToFile(PaintApplicationActivity paint) {
-		// �L���b�V������L���v�`�����쐬�A���̂��߃L���b�V����ON
+		// キャッシュからキャプチャを作成、そのためキャッシュをON
 		setDrawingCacheEnabled(true);
 		Bitmap bitmap = Bitmap.createBitmap(getDrawingCache());
-		// �L���b�V���͂����Ƃ�Ȃ��̂ŃL���b�V����OFF
+		// キャッシュはもうとらないのでキャッシュをOFF
 		setDrawingCacheEnabled(false);
-		// �ۑ���̌���(���݂��Ȃ��ꍇ�͍쐬)
+		// 保存先の決定(存在しない場合は作成)
 		File file;
 		String path = Environment.getExternalStorageDirectory() + "/PaintApplication/";
 		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
@@ -254,12 +254,12 @@ public class PaintView extends View {
 			file = Environment.getDataDirectory();
 		}
 		Date d = new Date();
-		// ��ӂƂȂ�t�@�C�������擾�i�^�C���X�^���v�j
+		// 一意となるファイル名を取得（タイムスタンプ）
 		String fileName = String.format("%4d%02d%02d-%02d%02d%02d",
 				(1900 + d.getYear()), d.getMonth() + 1, d.getDate(),
 				d.getHours(), d.getMinutes(), d.getSeconds());
 		file = new File(path + fileName + ".png");
-		try { // �摜���t�@�C���ɏ�������
+		try { // 画像をファイルに書き込む
 			FileOutputStream out = new FileOutputStream(file);
 			bitmap.compress(CompressFormat.PNG, 100, out);
 			out.flush();
@@ -270,7 +270,7 @@ public class PaintView extends View {
 			return false;
 		}
 	}
-	// ���f�B�A�X�L���i�ɃX�L����������
+	// メディアスキャナにスキャンさせる
 	void mediaScanExecute(PaintApplicationActivity paint, final String file) {
 		mc = new MediaScannerConnection(paint,
 			new MediaScannerConnection.MediaScannerConnectionClient() {

@@ -8,18 +8,15 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
 public class ConfigView extends PreferenceActivity {
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.pref);
 	}
-
 	public static Integer getStamp(Context context) {
 		return Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("conf_stamp_key", ""));
 	}
 	public static boolean getSound(Context context) {
-		return PreferenceManager.getDefaultSharedPreferences(context)
-				.getBoolean("conf_sound_key", false);
+		return PreferenceManager.getDefaultSharedPreferences(context).getBoolean("conf_sound_key", false);
 	}
 	public static Integer getBgColor(Context context) {
 		int resIntBgColor = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("conf_bgcolor_key", ""));
@@ -32,7 +29,6 @@ public class ConfigView extends PreferenceActivity {
 		}
 		return resIntBgColor;
 	}
-	
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		SharedPreferences.Editor editor = prefs.edit();
@@ -40,14 +36,6 @@ public class ConfigView extends PreferenceActivity {
 			editor.commit();
 		}
 	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-	}
+	@Override protected void onResume() { super.onResume(); }
+	@Override protected void onPause() { super.onPause(); }
 }

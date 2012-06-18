@@ -24,9 +24,9 @@ public class PaintApplicationActivity extends Activity {
 
 	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);// ���C���ɃJ�X�^���r���[��ǉ�
+		setContentView(R.layout.main);
 		paintView = (PaintView)findViewById(R.id.paintView);
-		new SubMenuClickListener(); // �T�u���j���[�{�^���Ɋւ��Ă͑S�Ă��̃��X�i�[�ɔC����Banonymous�ȃI�u�W�F�N�g�ł悢�B
+		new SubMenuClickListener(); // サブメニューボタンに関しては全てこのリスナーに任せる。anonymousなオブジェクトでよい。
 		
 		/*ivEraser = (ImageView) findViewById(R.id.imageView_eraser);*/
 	}
@@ -37,11 +37,11 @@ public class PaintApplicationActivity extends Activity {
 	}
 	@Override public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.configId: // �ݒ�{�^��������
+		case R.id.configId:
 			Intent it = new Intent(getApplicationContext(), ConfigView.class);
 			startActivityForResult(it, INTENT_FOR_CONFIG_VIEW);
 			break;
-		case R.id.clearId: // �N���A�{�^�������� (�͂�/�������̃_�C�A���O�\��)
+		case R.id.clearId:
 			AlertDialog.Builder adBuilder = new AlertDialog.Builder(this);
 			adBuilder.setTitle(R.string.clear);
 			adBuilder.setMessage(R.string.all_clear_message);
@@ -58,7 +58,7 @@ public class PaintApplicationActivity extends Activity {
 				});
 			adBuilder.show();
 			break;
-		case R.id.saveId: // �ۑ��{�^��������
+		case R.id.saveId:
 			new AlertDialog.Builder(this)
 				.setTitle(R.string.save)
 				.setMessage(paintView.isSaveToFile(this) ? R.string.save_success : R.string.save_fail)
@@ -69,7 +69,7 @@ public class PaintApplicationActivity extends Activity {
 	}
 	public void onActivityResult(int reqcode, int result, Intent it) {
 		switch(reqcode) {
-		case INTENT_FOR_PAINT_APPLICATION_THICK: // �����ݒ��ʂ���̖߂菈��
+		case INTENT_FOR_PAINT_APPLICATION_THICK:
 			if (result == RESULT_OK) {
 				paintView.setThickness(it.getIntExtra("THICK", 2));
 				paintView.setAntiAlias(it.getBooleanExtra("ANTIALIAS", true));
@@ -86,7 +86,7 @@ public class PaintApplicationActivity extends Activity {
 			break;
 		}
 	}
-	// �T�u���j���[�{�^���̃��X�i�[
+	// サブメニューボタンのリスナー
 	private class SubMenuClickListener implements View.OnClickListener {
 		private SubMenuClickListener() {
 			TypedArray tArray = getResources().obtainTypedArray(R.array.subMenuButtons);
