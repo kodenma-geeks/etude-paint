@@ -81,7 +81,7 @@ public class PaintApplicationActivity extends Activity {
 			paintView.setElementMode(ConfigView.getStamp(this));
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 			SharedPreferences.Editor editor = prefs.edit();
-			editor.clear(); 
+			editor.remove("conf_stamp_key"); 
 			editor.commit();
 			break;
 		}
